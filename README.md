@@ -1,4 +1,5 @@
 # Simulation-based Star Formation History Inference Hackathon
+[![forthebadge](https://forthebadge.com/images/badges/uses-badges.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/built-with-science.svg)](https://forthebadge.com) [![forthebadge](https://forthebadge.com/images/badges/powered-by-black-magic.svg)](https://forthebadge.com)
 
 Repository for SFH inference hackathon at [AstroInfo 2021](https://astroinfo2021.sciencesconf.org/).
 
