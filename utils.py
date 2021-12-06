@@ -14,3 +14,9 @@ def find_halftime(gal_sfh):
   half_time = gal_sfh.time[half_mass_index]  # find the corresponding half time
 
   return half_mass, half_time, len(nb_soluce)
+
+def smoothen(x,y):
+  # smoothen data with frac = 0.2 to adjuct if needed
+  import statsmodels.api as sm
+  lowess = sm.nonparametric.lowess(y, x, frac=0.2)
+  return lowess
