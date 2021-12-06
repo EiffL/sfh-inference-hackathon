@@ -18,17 +18,22 @@ See [this issue](https://github.com/EiffL/sfh-inference-hackathon/issues/1) to g
 
 2. Clone this repo
 ```bash
-$ git clone https://github.com/EiffL/sfh-inference-hackathon.git
+git clone https://github.com/EiffL/sfh-inference-hackathon.git
 ```
 
-3. Start an interactive session
+3. Load the environment
 ```bash
-$ srun --ntasks=1 --cpus-per-task=10 --gres=gpu:1 --hint=nomultithread --time=06:00:00 -A qrc@gpu --reservation-hackathon --pty bash
+module load tensorflow-gpu/py3/2.6.0
 ```
 
-4. Start a jupyter lab
+4. Start an interactive session
 ```bash
-$ idrlab
+srun --ntasks=1 --cpus-per-task=10 --gres=gpu:1 --hint=nomultithread --time=06:00:00 -A qrc@gpu --reservation=hackathon --pty bash
+```
+
+5. Start a jupyter lab
+```bash
+idrlab
 ```
 And then follow the link to https://idrvprox.idris.fr, log in, and click on your submitted job.
 
