@@ -4,10 +4,18 @@ import tensorflow_datasets as tfds
 import pandas as pd
 # TODO(sfh): Markdown description  that will appear on the catalog page.
 _DESCRIPTION = """
-Description is **formatted** as markdown.
+# SFH Dataset
 
-It should also contain any processing which has been applied (if any),
-(e.g. corrupted example skipped, images cropped,...):
+Dataset for generative models. Data is extracted from csv files of TNG100 snapshots
+For each galaxy, the following sequence are stored into the dataset:
+ - time
+ - SFR_halfRad
+ - SFR_Rad
+ - SFR_Max
+ - Mstar_Half
+ - Mstar
+ 
+Plus : N_age, just an int to indicate to the model how many of the timesteps are relevants
 """
 
 # TODO(sfh): BibTeX citation
@@ -39,6 +47,7 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
                     "SFR_Max": tfds.features.Tensor(shape=(N_TIMESTEPS, 1)),
                     "Mstar_Half": tfds.features.Tensor(shape=(N_TIMESTEPS, 1)),
                     "Mstar": tfds.features.Tensor(shape=(N_TIMESTEPS, 1)),
+                    "N_age": tfds.features.Tensor(shape=(1,)),
 
 
                     #"label": tfds.features.ClassLabel(names=["no", "yes"]),
@@ -58,13 +67,13 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
  
         data = {}
         df = pd.read_csv(path)
-        timesteps = df[['SnapNum']].values
+        timesteps = df[['SnapNum']].values.astype(np.int)
         
         for k in keys:
             d = np.zeros((N_TIMESTEPS, 1))
             d[timesteps, 0] = df[[k]].values
             data[k] = d
-
+        data["N_age"] = df.shape[0]
         return data
 
 
