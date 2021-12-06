@@ -33,7 +33,7 @@ srun --ntasks=1 --cpus-per-task=10 --gres=gpu:1 --hint=nomultithread --time=06:0
 
 5. Start a jupyter lab
 ```bash
-idrlab
+idrlab --notebook-dir=$PWD
 ```
 And then follow the link to https://idrvprox.idris.fr, log in, and click on your submitted job.
 
