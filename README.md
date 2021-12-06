@@ -30,5 +30,6 @@ $ srun --ntasks=1 --cpus-per-task=10 --gres=gpu:1 --hint=nomultithread --time=06
 ```bash
 $ idrlab
 ```
+And then follow the link to https://idrvprox.idris.fr, log in, and click on your submitted job.
 
-And then follow the link to https://idrvprox.idris.fr
+Then you can try to load the [intro notebook](notebooks/Intro_Hackathon_Astroinfo21_SFHs.ipynb)
