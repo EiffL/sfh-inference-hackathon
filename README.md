@@ -11,3 +11,24 @@ Participants:
 
 
 See [this issue](https://github.com/EiffL/sfh-inference-hackathon/issues/1) to get started.
+
+## How to get started on Jean-Zay
+
+1. Log on the machine
+
+2. Clone this repo
+```bash
+$ git clone https://github.com/EiffL/sfh-inference-hackathon.git
+```
+
+3. Start an interactive session
+```bash
+$ srun --ntasks=1 --cpus-per-task=10 --gres=gpu:1 --hint=nomultithread --time=06:00:00 -A qrc@gpu --reservation-hackathon --pty bash
+```
+
+4. Start a jupyter lab
+```bash
+$ idrlab
+```
+
+And then follow the link to https://idrvprox.idris.fr
