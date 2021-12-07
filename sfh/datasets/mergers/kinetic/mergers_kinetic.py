@@ -11,7 +11,7 @@ Data is extracted from:
  - CSV file TNG100_SDSS_MajorMergers.csv
  - FITS files mergers-maps-sn99-moments_TNG100-1_99_<object_id>_stars_<projection_id>__32.fits
 
-The snap2z.csv file contains equivalences between Snapshots numbers and redshifts, age and loopback time
+The snaps.csv file contains equivalences between Snapshots numbers and redshifts, age and loopback time
 
 """
 
@@ -48,14 +48,12 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
 
   def _split_generators(self, dl_manager: tfds.download.DownloadManager):
     """Returns SplitGenerators."""
-    # TODO(Mergers_kinetic): dl_manager has to be adapted for Jean-Zay 
     data_path = dl_manager.manual_dir 
 
     return [
         tfds.core.SplitGenerator(
             name=tfds.Split.TRAIN,
             # Send paths to fits files and the TNG100_SDSS_MajorMergers.csv to _generate_examples method
-            # TODO(Mergers_kinetic): paths have to be adapted for Jean-Zay 
             gen_kwargs={"fits_dir_path": os.path.join(data_path, "/mergers/maps/sn99/"),
                         "majormergers_path": os.path.join(data_path, "/mergers/")
             },
