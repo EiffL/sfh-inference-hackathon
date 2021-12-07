@@ -1,6 +1,59 @@
 import statsmodels.api as sm
 import numpy as np
 
+class SubHalos:
+    def __init__(self, filename):
+        self.filename = filename
+        self._raw = np.load(filename)
+        self._data = self._raw['data']
+        self._wavelengths = self._raw['wl']
+        self._times = self._raw['times']
+
+    def __getitem__(self, i):
+        return SubHalo(self._raw[i], wl=self._wavelengths, times=self._times)
+
+    @property
+    def shf_times(self):
+        return self._times
+
+    @property
+    def wl(self):
+        return self._wavelengths
+
+
+class SubHalo:
+    def __init__(self, row, wl=None, times=None):
+        self._shid = row[0]
+        self._fluxes = row[1:144]
+        self._mstar = row[244:344]
+        self._sfr = row[144:244]
+        self._wl = wl
+        self._times = times
+
+    @property
+    def shid(self):
+        return self._shid
+
+    @property
+    def fluxes(self):
+        return self._fluxes
+
+    @property
+    def mstar(self):
+        return self._mstar
+
+    @property
+    def sfr(self):
+        return self._sfr
+
+    @property
+    def wl(self):
+        return self._wl
+
+    @property
+    def times(self):
+        return self._times
+
 
 def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):
 
