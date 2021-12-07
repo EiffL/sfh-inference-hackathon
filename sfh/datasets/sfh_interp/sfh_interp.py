@@ -1,15 +1,15 @@
-"""sfh dataset."""
+"""sfh_interp dataset."""
 
 import os
 
+import tensorflow_datasets as tfds
 from astropy.table import Table, vstack
 
 import tensorflow as tf
-import tensorflow_datasets as tfds
 import numpy as np
-# TODO(sfh): Markdown description  that will appear on the catalog page.
+# TODO(sfh_interp): Markdown description  that will appear on the catalog page.
 _DESCRIPTION = """
-# SFH Dataset
+# SFH_INTERP Dataset
 
 Dataset for generative models. Data is extracted from csv files of TNG100 snapshots
 For each galaxy, the following sequence are stored into the dataset:
@@ -19,24 +19,22 @@ For each galaxy, the following sequence are stored into the dataset:
  - SFR_Max
  - Mstar_Half
  - Mstar
- - Mask, 0 is value has been inserted, 1 otherwise
+ - Mask, 1 if value is original from raw data, 2 if interpolated, 0 if expanded at high z
 
 """
 
-# TODO(sfh): BibTeX citation
+# TODO(sfh_interp): BibTeX citation
 _CITATION = """
 """
 
 N_TIMESTEPS = 100
 
-class Sfh(tfds.core.GeneratorBasedBuilder):
-    """DatasetBuilder for sfh dataset."""
-
-    VERSION = tfds.core.Version("1.0.0")
+class SfhInterp(tfds.core.GeneratorBasedBuilder):
+    """DatasetBuilder for sfh_interp dataset."""
+    VERSION = tfds.core.Version('1.0.0')
     RELEASE_NOTES = {
-        "1.0.0": "Initial release.",
+        '1.0.0': 'Initial release.',
     }
-    MANUAL_DOWNLOAD_INSTRUCTIONS = "TBD"
 
     def _info(self) -> tfds.core.DatasetInfo:
         """Returns the dataset metadata."""
@@ -79,6 +77,7 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
         return {
             "train": self._generate_examples(path),
         }
+
     @staticmethod
     def _generate_examples(path):
         """Yields examples."""
@@ -99,11 +98,14 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
             sfh = Table.read(filename)
             mask = np.zeros((N_TIMESTEPS,), dtype=np.int32)
             mask[99-sfh['SnapNUm']] = 1.
+            last_val = np.argwhere(mask==1.)[-1][0]
             tmp_sfh = empty_sfh.copy() 
-            
+
             for k in empty_sfh.colnames:
                 tmp_sfh[k][99-sfh['SnapNUm']] = sfh[k]
-            
+                tmp_interp = (tmp_sfh[k][np.argwhere(mask[:last_val]==0.)+1]+tmp_sfh[k][np.argwhere(mask[:last_val]==0.)-1])/2
+                tmp_sfh[k][np.argwhere(mask[:last_val]==0.)] = tmp_interp
+
             yield object_id, {
                 "time": tmp_sfh['time'].value,
                 "SFR_halfRad": tmp_sfh['SFR_halfRad'].value,
@@ -113,3 +115,4 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
                 "Mstar": tmp_sfh['Mstar'].value,
                 "Mask": mask
             }
+
