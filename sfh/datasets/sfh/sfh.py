@@ -100,7 +100,6 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
         for filename in glob.glob(data_path+"/*.csv"):
 
             object_id = filename.split("_")[-1]
-            #print(filename)
             sfh = Table.read(filename)
             mask = np.zeros((N_TIMESTEPS,), dtype=np.int32)
             mask[99-sfh['SnapNUm']] = 1.
