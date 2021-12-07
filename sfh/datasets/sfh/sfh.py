@@ -1,6 +1,7 @@
 """sfh dataset."""
 
 import os
+import glob
 
 from astropy.table import Table, vstack
 
@@ -47,17 +48,17 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
             features=tfds.features.FeaturesDict(
                 {
                     "time": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "SFR_halfRad": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "SFR_Rad": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "SFR_Max": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "Mstar_Half": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "Mstar": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "Mask": tfds.features.Tensor(
                         shape=(N_TIMESTEPS,), dtype=tf.dtypes.int32),
                 }
@@ -73,29 +74,32 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
         """Returns SplitGenerators."""
         # TODO(sfh): Downloads the data and defines the splits
-        path = dl_manager.extract(os.path.join(dl_manager.manual_dir, "cats_SFH"))#download_and_extract("https://todo-data-url")
+        data_path = os.path.join(dl_manager.manual_dir, "cats_SFH") #download_and_extract("https://todo-data-url")
 
         # TODO(sfh): Returns the Dict[split names, Iterator[Key, Example]]
-        return {
-            "train": self._generate_examples(path),
-        }
-    @staticmethod
-    def _generate_examples(path):
+        return [
+                tfds.core.SplitGenerator(
+                    name=tfds.Split.TRAIN,
+                    # Send paths to fits files and the TNG100_SDSS_MajorMergers.csv to _generate_examples method
+                    gen_kwargs={"data_path": data_path},
+                ),
+            ]
+
+    def _generate_examples(self, data_path):
         """Yields examples."""
         # To complete the partial SFH (the ones not starting at the beginning
         # of the Universe) we need to have all the SnapNums with the associated
         # time.  We take those from a know SFH.
-        empty_sfh = Table.read(path / "TNG100_mainprojenitors_102694.csv")
+        empty_sfh = Table.read(os.path.join(data_path, "TNG100_mainprojenitors_102694.csv"))
         empty_sfh['SFR_halfRad'] = 0.
         empty_sfh['SFR_Rad'] = 0.
         empty_sfh['SFR_Max'] = 0.
         empty_sfh['Mstar_Half'] = 0.
         empty_sfh['Mstar'] = 0
+	
+        for filename in glob.glob(data_path+"/*.csv"):
 
-        for filename in path.glob("*.csv"):
-
-            object_id = filename.stem.split("_")[-1]
-            print(filename)
+            object_id = filename.split("_")[-1]
             sfh = Table.read(filename)
             mask = np.zeros((N_TIMESTEPS,), dtype=np.int32)
             mask[99-sfh['SnapNUm']] = 1.
@@ -105,11 +109,11 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
                 tmp_sfh[k][99-sfh['SnapNUm']] = sfh[k]
             
             yield object_id, {
-                "time": tmp_sfh['time'].value,
-                "SFR_halfRad": tmp_sfh['SFR_halfRad'].value,
-                "SFR_Rad": tmp_sfh['SFR_Rad'].value,
-                "SFR_Max": tmp_sfh['SFR_Max'].value,
-                "Mstar_Half": tmp_sfh['Mstar_Half'].value,
-                "Mstar": tmp_sfh['Mstar'].value,
+                "time": np.array(tmp_sfh['time']).astype('float32'),
+                "SFR_halfRad": np.array(tmp_sfh['SFR_halfRad']).astype('float32'),
+                "SFR_Rad": np.array(tmp_sfh['SFR_Rad']).astype('float32'),
+                "SFR_Max": np.array(tmp_sfh['SFR_Max']).astype('float32'),
+                "Mstar_Half": np.array(tmp_sfh['Mstar_Half']).astype('float32'),
+                "Mstar": np.array(tmp_sfh['Mstar']).astype('float32'),
                 "Mask": mask
             }
