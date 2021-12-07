@@ -83,9 +83,11 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
       image = fits.getdata(fits_dir_path+fits_file, ext=0)
       # Get snapshot number of the last major merger for the current object_id from the mergers_data dataframe
       SnapNumLastMajorMerger = mergers_data.loc[object_id,'SnapNumLastMajorMerger']
-      if(SnapNumLastMajorMerger>0): # Exclude galaxies for which there is no lastMajorMerger event
+      try:
         # Convert snapshot number to lookback time using the snaps dataframe
         last_major_merger = snaps.loc[SnapNumLastMajorMerger,'lbt']
         # Yiel with i because in our case object_id will be the same for the 4 different projections
         yield i, {'image': image.astype("float32"), 'last_major_merger': last_major_merger, 'object_id': object_id}
+      except:
+        print("File ", fits_file, " not added to the dataset (no Major Merger event -> SnapNumLastMajorMerger=-1)")
 
