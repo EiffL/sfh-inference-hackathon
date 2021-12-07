@@ -2,23 +2,26 @@ import statsmodels.api as sm
 import numpy as np
 
 
-def find_summaries(gal_sfh, percentile=0.5):
+def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):
 
     ''' compute the half mass and the half time of a galaxy 
           Input: the sfh
           Output: the half mass, the corresponding half time, and the index of the mass/time summary
     '''
 
-    summary_mass = min(gal_sfh.Mstar_Half, key=lambda x:abs(x-gal_sfh.Mstar_Half[0]*percentile)) # find mass closest to the half mass
-    summary_mass_indices = np.where(gal_sfh.Mstar_Half == summary_mass)[0]  # find the corresponding indices
-    # if half_mass_indices == 1:
-    # nb_soluce = 1 # find the number of indices
-    # else:
-    # nb_soluce = len(half_mass_indices)
-    summary_mass_index = summary_mass_indices[0]  # chose the first index for the half mass
-    summary_time = gal_sfh.time[summary_mass_index]  # find the corresponding half time
+    summary_masses = []
+    summary_times = []
+    summary_indices = []
+    for percentile in percentiles:
+        summary_mass = min(mass, key=lambda x: abs(x-mass[0]*percentile))  # find mass closest to the half mass
+        summary_masses.append(summary_mass)
+        summary_mass_indices = np.where(mass == summary_mass)[0]  # find the corresponding indices
+        summary_mass_index = summary_mass_indices[0]  # chose the first index for the half mass
+        summary_indices.append(summary_mass_index)
+        summary_time = time[summary_mass_index]  # find the corresponding half time
+        summary_times.append(summary_time)
 
-    return summary_mass, summary_time, summary_mass_index
+    return summary_times, summary_masses, summary_indices
 
 
 def plot_with_summaries(fig, axs, index, flux, wl, sfh):
