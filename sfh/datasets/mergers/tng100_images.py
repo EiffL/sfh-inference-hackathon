@@ -125,7 +125,7 @@ class Tng100Images(tfds.core.GeneratorBasedBuilder):
         print("Problem for gal_ids",gal_ids[i])
         continue
 
-     if lbt>0:
+      if lbt>0:
           yield i, {"image":img.astype("float32"),
                       "last_major_merger":lbt,
                     "object_id":gal_ids[i]}
