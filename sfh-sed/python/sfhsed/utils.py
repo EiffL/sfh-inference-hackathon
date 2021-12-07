@@ -22,6 +22,9 @@ class SubHalos:
     def __getitem__(self, i):
         return SubHalo(self._raw[i], wl=self._wavelengths, times=self._times)
 
+    def __len__(self):
+        return len(self._data)
+    
     @property
     def shf_times(self):
         return self._times
@@ -230,9 +233,6 @@ def create_data_array(path=None, limit=None):
     """Create the array of data using the given photometry catalog.
     Optionally limit the number of rows to the given limit.
     """
-    print("Inside create_data_array")
-    import sys
-    sys.stdout.flush()
     phot_cat = read_phot_cat(path=path)
 
     if limit is None:
@@ -250,6 +250,8 @@ def create_data_array(path=None, limit=None):
     # I know there are 100 snapshots maximum
     all_sfh_times = [set() for i in range(100)]
     for index, (shid, fluxes) in enumerate(phot_cat.iterrows()):
+        if index % 1000 == 0:
+            print(f"Processing {index}/{limit}")
         if index >= limit:
             break
         arr[index, 0] = shid
@@ -257,7 +259,7 @@ def create_data_array(path=None, limit=None):
         try:
             sfh = read_tng_file(shid)
         except:
-            arr[354] = 1
+            arr[index, 354] = 1
             continue
         # want to get the time of SFH (common to all SFH)
         snap_num = np.asarray(sfh['SnapNUm'], dtype=int)
@@ -273,9 +275,9 @@ def create_data_array(path=None, limit=None):
         sfr_mstar_half = sfh['Mstar_Half'].array
         n = sfr_mstar_half.shape[0]
         arr[index, 244:244+n] = sfr_mstar_half
-        summaries = find_summaries(sfr_mstar_half, times)
-        arr[344:353] = summaries
-        arr[353] = sfr_mstar_half[0] / max(sfr_mstar_half)
+        summaries, _, _ = find_summaries(sfr_mstar_half, sfh['time'])
+        arr[index, 344:353] = summaries
+        arr[index, 353] = sfr_mstar_half[0] / max(sfr_mstar_half)
 
     times = np.asarray([s.pop() for s in all_sfh_times])
     wl = read_wavelength(path=path)
