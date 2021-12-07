@@ -2,10 +2,14 @@ import numpy as np
 import tensorflow_datasets as tfds
 import tensorflow as tf
 <<<<<<< HEAD
+<<<<<<< HEAD
 from sfhsed import utils
 =======
 import utils
 >>>>>>> reorganise, dataset from original data
+=======
+from sfhsed import utils
+>>>>>>> fix shape of times ; import utils
 
 ''' Dataset builder '''
 # TODO(my_dataset): Markdown description  that will appear on the catalog page.
