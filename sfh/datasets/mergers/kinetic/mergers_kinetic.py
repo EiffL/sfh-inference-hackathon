@@ -40,6 +40,7 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
         features=tfds.features.FeaturesDict({
             'image': tfds.features.Tensor(shape=(3, 512, 512), dtype=tf.float32),
             'last_major_merger': tf.float32,
+            'obect_id': tf.int32,
         }),
         supervised_keys=('image', 'last_major_merger'), 
         homepage='https://dataset-homepage/',
@@ -85,5 +86,5 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
       # Convert snapshot number to lookback time using the snaps dataframe
       last_major_merger = snaps.loc[napNumLastMajorMerger,'lbt']
       # Yiel with i because in our case object_id will be the same for the 4 different projections
-      yield i, {'image': image.astype("float32"), 'last_major_merger': last_major_merger}
+      yield i, {'image': image.astype("float32"), 'last_major_merger': last_major_merger, 'object_id': object_id}
 
