@@ -19,7 +19,7 @@ For each galaxy, the following sequence are stored into the dataset:
  - SFR_Max
  - Mstar_Half
  - Mstar
- - Mask, 1 if value is original from raw data, 2 if interpolated, 0 if expanded at high z
+ - Mask, 1 if value is original from raw data, 0 otherwise
 
 """
 
@@ -35,7 +35,7 @@ class SfhInterp(tfds.core.GeneratorBasedBuilder):
     RELEASE_NOTES = {
         '1.0.0': 'Initial release.',
     }
-
+    MANUAL_DOWNLOAD_INSTRUCTIONS = "TBD"
     def _info(self) -> tfds.core.DatasetInfo:
         """Returns the dataset metadata."""
         # TODO(sfh): Specifies the tfds.core.DatasetInfo object
