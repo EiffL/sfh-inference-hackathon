@@ -87,5 +87,5 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
       # Convert snapshot number to lookback time using the snaps dataframe
       last_major_merger = snaps.loc[napNumLastMajorMerger,'lbt']
       # Yiel with i because in our case object_id will be the same for the 4 different projections
-      yield i, {'image': image.astype("float32"), 'last_major_merger': last_major_merger, 'object_id': object_id.astype("int32")}
+      yield i, {'image': image.astype("float32"), 'last_major_merger': last_major_merger, 'object_id': object_id}
 
