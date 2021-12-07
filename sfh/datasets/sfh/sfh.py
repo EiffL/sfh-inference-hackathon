@@ -6,7 +6,7 @@ from astropy.table import Table, vstack
 
 import tensorflow as tf
 import tensorflow_datasets as tfds
-
+import numpy as np
 # TODO(sfh): Markdown description  that will appear on the catalog page.
 _DESCRIPTION = """
 # SFH Dataset
@@ -58,8 +58,8 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
                         shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
                     "Mstar": tfds.features.Tensor(
                         shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
-                    "N_age": tfds.features.Tensor(
-                        shape=(1,), dtype=tf.dtypes.int32),
+                    "Mask": tfds.features.Tensor(
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.int32),
                 }
             ),
             # If there's a common (input, target) tuple from the
@@ -79,8 +79,8 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
         return {
             "train": self._generate_examples(path),
         }
-
-    def _generate_examples(self, path):
+    @staticmethod
+    def _generate_examples(path):
         """Yields examples."""
         # To complete the partial SFH (the ones not starting at the beginning
         # of the Universe) we need to have all the SnapNums with the associated
@@ -97,21 +97,19 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
             object_id = filename.stem.split("_")[-1]
 
             sfh = Table.read(filename)
-            n_age = len(sfh)
-
-            # Add the missing SnapNums
-            sfh_min_snapnum = sfh['SnapNUm'].min()
-            sfh = vstack([
-                sfh,
-                empty_sfh[empty_sfh['SnapNUm'] < sfh_min_snapnum]],
-            )
-
+            mask = np.zeros((N_TIMESTEPS,), dtype=np.int32)
+            mask[sfh['SnapNUm']] = 1.
+            tmp_sfh = empty_sfh.copy() 
+            
+            for k in empty_sfh.colnames:
+                tmp_sfh[k][sfh['SnapNUm']] = sfh[k]
+            
             yield object_id, {
-                "time": sfh['time'].value,
-                "SFR_halfRad": sfh['SFR_halfRad'].value,
-                "SFR_Rad": sfh['SFR_Rad'].value,
-                "SFR_Max": sfh['SFR_Max'].value,
-                "Mstar_Half": sfh['Mstar_Half'].value,
-                "Mstar": sfh['Mstar'].value,
-                "N_age": [n_age]
+                "time": tmp_sfh['time'].value,
+                "SFR_halfRad": tmp_sfh['SFR_halfRad'].value,
+                "SFR_Rad": tmp_sfh['SFR_Rad'].value,
+                "SFR_Max": tmp_sfh['SFR_Max'].value,
+                "Mstar_Half": tmp_sfh['Mstar_Half'].value,
+                "Mstar": tmp_sfh['Mstar'].value,
+                "Mask": mask
             }
