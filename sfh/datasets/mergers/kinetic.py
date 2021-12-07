@@ -50,13 +50,13 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
   def _split_generators(self, dl_manager: tfds.download.DownloadManager):
     """Returns SplitGenerators."""
     data_path = os.path.expandvars("$ALL_CCFRWORK/SFH/tng100/")
-
+    print(data_path)
     return [
         tfds.core.SplitGenerator(
             name=tfds.Split.TRAIN,
             # Send paths to fits files and the TNG100_SDSS_MajorMergers.csv to _generate_examples method
-            gen_kwargs={"fits_dir_path": os.path.join(data_path, "/mergers/maps/sn99/"),
-                        "majormergers_path": os.path.join(data_path, "/mergers/")
+            gen_kwargs={"fits_dir_path": data_path+"mergers/maps/sn99/",
+                        "majormergers_path": data_path+"mergers/"
             },
         ),
     ]
@@ -69,6 +69,7 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
 
     # Create new dataframe with the columns 'Illustris_ID' and 'SnapNumLastMajorMerger'
     # of the TNG100_SDSS_MajorMergers.csv file
+    print(majormergers_path)
     mergers_data =  pd.read_csv(majormergers_path+"TNG100_SDSS_MajorMergers.csv",
       usecols=['Illustris_ID','SnapNumLastMajorMerger'],
       index_col='Illustris_ID'
