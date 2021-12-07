@@ -1,6 +1,7 @@
 """sfh dataset."""
 
 import os
+import glob
 
 from astropy.table import Table, vstack
 
@@ -73,26 +74,30 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
         """Returns SplitGenerators."""
         # TODO(sfh): Downloads the data and defines the splits
-        path = dl_manager.extract(os.path.join(dl_manager.manual_dir, "cats_SFH"))#download_and_extract("https://todo-data-url")
+        data_path = os.path.join(dl_manager.manual_dir, "cats_SFH") #download_and_extract("https://todo-data-url")
 
         # TODO(sfh): Returns the Dict[split names, Iterator[Key, Example]]
-        return {
-            "train": self._generate_examples(path),
-        }
-    @staticmethod
-    def _generate_examples(path):
+        return [
+                tfds.core.SplitGenerator(
+                    name=tfds.Split.TRAIN,
+                    # Send paths to fits files and the TNG100_SDSS_MajorMergers.csv to _generate_examples method
+                    gen_kwargs={"data_path": data_path},
+                ),
+            ]
+
+    def _generate_examples(self, data_path):
         """Yields examples."""
         # To complete the partial SFH (the ones not starting at the beginning
         # of the Universe) we need to have all the SnapNums with the associated
         # time.  We take those from a know SFH.
-        empty_sfh = Table.read(path / "TNG100_mainprojenitors_102694.csv")
+        empty_sfh = Table.read(os.path.join(data_path, "TNG100_mainprojenitors_102694.csv"))
         empty_sfh['SFR_halfRad'] = 0.
         empty_sfh['SFR_Rad'] = 0.
         empty_sfh['SFR_Max'] = 0.
         empty_sfh['Mstar_Half'] = 0.
         empty_sfh['Mstar'] = 0
 
-        for filename in path.glob("*.csv"):
+        for filename in glob.glob(data_path+"*.csv"):
 
             object_id = filename.stem.split("_")[-1]
             print(filename)
