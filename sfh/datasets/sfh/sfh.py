@@ -40,17 +40,20 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
             description=_DESCRIPTION,
             features=tfds.features.FeaturesDict(
                 {
-                    # These are the features of your dataset like images, labels ...
-                    "time": tfds.features.Tensor(shape=(N_TIMESTEPS, 1)),
-                    "SFR_halfRad": tfds.features.Tensor(shape=(N_TIMESTEPS, 1)),
-                    "SFR_Rad": tfds.features.Tensor(shape=(N_TIMESTEPS, 1)),
-                    "SFR_Max": tfds.features.Tensor(shape=(N_TIMESTEPS, 1)),
-                    "Mstar_Half": tfds.features.Tensor(shape=(N_TIMESTEPS, 1)),
-                    "Mstar": tfds.features.Tensor(shape=(N_TIMESTEPS, 1)),
-                    "N_age": tfds.features.Tensor(shape=(1,)),
-
-
-                    #"label": tfds.features.ClassLabel(names=["no", "yes"]),
+                    "time": tfds.features.Tensor(
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                    "SFR_halfRad": tfds.features.Tensor(
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                    "SFR_Rad": tfds.features.Tensor(
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                    "SFR_Max": tfds.features.Tensor(
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                    "Mstar_Half": tfds.features.Tensor(
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                    "Mstar": tfds.features.Tensor(
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                    "N_age": tfds.features.Tensor(
+                        shape=(1,), dtype=tf.dtypes.int32),
                 }
             ),
             # If there's a common (input, target) tuple from the
