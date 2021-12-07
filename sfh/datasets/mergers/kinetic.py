@@ -69,7 +69,6 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
 
     # Create new dataframe with the columns 'Illustris_ID' and 'SnapNumLastMajorMerger'
     # of the TNG100_SDSS_MajorMergers.csv file
-    print(majormergers_path)
     mergers_data =  pd.read_csv(majormergers_path+"TNG100_SDSS_MajorMergers.csv",
       usecols=['Illustris_ID','SnapNumLastMajorMerger'],
       index_col='Illustris_ID'
@@ -80,6 +79,8 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
     for i, fits_file in enumerate(os.listdir(fits_dir_path)):
       # Get object_id from the current FITS file name
       object_id = int(fits_file.split('_')[3])
+      print("OBJECT_ID:/")
+      print(object_id)
       # Extract image data from the FITS file
       image = fits.getdata(fits_dir_path+fits_file, ext=0)
       # Get snapshot number of the last major merger for the current object_id from the mergers_data dataframe
