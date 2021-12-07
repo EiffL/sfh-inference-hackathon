@@ -49,8 +49,8 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
 
   def _split_generators(self, dl_manager: tfds.download.DownloadManager):
     """Returns SplitGenerators."""
+    # This data_path corresponds to the path od
     data_path = os.path.expandvars("$ALL_CCFRWORK/SFH/tng100/")
-    print(data_path)
     return [
         tfds.core.SplitGenerator(
             name=tfds.Split.TRAIN,
@@ -75,7 +75,7 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
       index_col='Illustris_ID'
     )
     # Create new dataframe with equivalence values between Snapshots numbers and redshifts, age, loopback time
-    snaps = pd.read_csv("snaps.csv", index_col=0, names=['sn', 'z', 'age' 'lbt'])
+    snaps = pd.read_csv("./snaps.csv", index_col=0, names=['sn', 'z', 'age' 'lbt'])
     
     for i, fits_file in enumerate(os.listdir(fits_dir_path)):
       # Get object_id from the current FITS file name
