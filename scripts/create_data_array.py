@@ -117,6 +117,8 @@ if __name__ == '__main__':
             help='path to TNG100 data', default=TNG100_PATH)
     parser.add_argument('--limit', type=int,
             help='limit to the first *limit* rows')
+    parser.add_argument('--output', type=str,
+            help='output file', default='data.npz')
     args = parser.parse_args()
 
     print(f"Path: {args.path}")
@@ -124,4 +126,5 @@ if __name__ == '__main__':
     phot_cat = read_phot_cat(path=args.path)
     times, data = create_data_array(phot_cat, limit=args.limit)
     wl = read_wavelength(path=args.path)
-    np.savez('rawdata.npy', data=data, times=times, wl=wl)
+    print(f"Writing to: {args.output}")
+    np.savez(args.output, data=data, times=times, wl=wl)
