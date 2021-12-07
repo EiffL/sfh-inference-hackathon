@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow_datasets as tfds
 import tensorflow as tf
-import utils
+from sfhsed import utils
 
 ''' Dataset builder '''
 # TODO(my_dataset): Markdown description  that will appear on the catalog page.
