@@ -49,15 +49,15 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
   def _split_generators(self, dl_manager: tfds.download.DownloadManager):
     """Returns SplitGenerators."""
     # TODO(Mergers_kinetic): dl_manager has to be adapted for Jean-Zay 
-    data_path = dl_manager.extract(os.path.join(dl_manager.manual_dir, "tng100_mergers.zip")) 
+    data_path = dl_manager.manual_dir 
 
     return [
         tfds.core.SplitGenerator(
             name=tfds.Split.TRAIN,
             # Send paths to fits files and the TNG100_SDSS_MajorMergers.csv to _generate_examples method
             # TODO(Mergers_kinetic): paths have to be adapted for Jean-Zay 
-            gen_kwargs={"fits_dir_path": os.path.join(data_path, "content/data/mergers/maps/sn99/"),
-                        "majormergers_path": os.path.join(data_path, "content/data/mergers/")
+            gen_kwargs={"fits_dir_path": os.path.join(data_path, "/mergers/maps/sn99/"),
+                        "majormergers_path": os.path.join(data_path, "/mergers/")
             },
         ),
     ]
