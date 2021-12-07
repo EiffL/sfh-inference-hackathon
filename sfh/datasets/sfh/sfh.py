@@ -1,7 +1,12 @@
 """sfh dataset."""
 
+import os
+
+from astropy.table import Table, vstack
+
+import tensorflow as tf
 import tensorflow_datasets as tfds
-import pandas as pd
+
 # TODO(sfh): Markdown description  that will appear on the catalog page.
 _DESCRIPTION = """
 # SFH Dataset
@@ -14,7 +19,7 @@ For each galaxy, the following sequence are stored into the dataset:
  - SFR_Max
  - Mstar_Half
  - Mstar
- 
+
 Plus : N_age, just an int to indicate to the model how many of the timesteps are relevants
 """
 
@@ -31,6 +36,7 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
     RELEASE_NOTES = {
         "1.0.0": "Initial release.",
     }
+    MANUAL_DOWNLOAD_INSTRUCTIONS = "TBD"
 
     def _info(self) -> tfds.core.DatasetInfo:
         """Returns the dataset metadata."""
@@ -64,22 +70,6 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
             citation=_CITATION,
         )
 
-    def csv_to_np(self, path):
-
-        keys = ["time", "SFR_halfRad", "SFR_Rad", "SFR_Max", "Mstar_Half", "Mstar"]
- 
-        data = {}
-        df = pd.read_csv(path)
-        timesteps = df[['SnapNum']].values.astype(np.int)
-        
-        for k in keys:
-            d = np.zeros((N_TIMESTEPS, 1))
-            d[timesteps, 0] = df[[k]].values
-            data[k] = d
-        data["N_age"] = df.shape[0]
-        return data
-
-
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
         """Returns SplitGenerators."""
         # TODO(sfh): Downloads the data and defines the splits
@@ -92,6 +82,36 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
 
     def _generate_examples(self, path):
         """Yields examples."""
-        # TODO(sfh): Yields (key, example) tuples from the dataset
-        for f in path.glob("*.csv"):
-            yield "key", csv_to_np(path)
+        # To complete the partial SFH (the ones not starting at the beginning
+        # of the Universe) we need to have all the SnapNums with the associated
+        # time.  We take those from a know SFH.
+        empty_sfh = Table.read(path / "TNG100_mainprojenitors_102694.csv")
+        empty_sfh['SFR_halfRad'] = 0.
+        empty_sfh['SFR_Rad'] = 0.
+        empty_sfh['SFR_Max'] = 0.
+        empty_sfh['Mstar_Half'] = 0.
+        empty_sfh['Mstar'] = 0
+
+        for filename in path.glob("*.csv"):
+
+            object_id = filename.stem.split("_")[-1]
+
+            sfh = Table.read(filename)
+            n_age = len(sfh)
+
+            # Add the missing SnapNums
+            sfh_min_snapnum = sfh['SnapNUm'].min()
+            sfh = vstack([
+                sfh,
+                empty_sfh[empty_sfh['SnapNUm'] < sfh_min_snapnum]],
+            )
+
+            yield object_id, {
+                "time": sfh['time'].value,
+                "SFR_halfRad": sfh['SFR_halfRad'].value,
+                "SFR_Rad": sfh['SFR_Rad'].value,
+                "SFR_Max": sfh['SFR_Max'].value,
+                "Mstar_Half": sfh['Mstar_Half'].value,
+                "Mstar": sfh['Mstar'].value,
+                "N_age": [n_age]
+            }
