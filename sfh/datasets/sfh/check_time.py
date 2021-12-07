@@ -4,15 +4,18 @@
 import os
 from astropy.table import Table, setdiff
 from glob import iglob
+import sys
 
-dir_work = '/Volumes/WorkJB/hackathonSFR/cats_SFH' # The local directory where the files are
+dir_work = sys.argv[1] # The local directory where the files are
+suffix_file = sys.argv[2] # The suffix to add to outputs, e.g. 'JB.csv' to keep the file type
+
 ref_table = 'TNG100_mainprojenitors_102694.csv' # The reference table containing all times (100)
 ref_data = Table.read(os.path.join(dir_work, ref_table), format='csv') # Reading corresponding data
 
 # Loop on the tables
 tables = iglob(os.path.join(dir_work, '*.csv'))
 for table in tables:
-    if 'JB.csv' in table: # Protecting from possible already modified tables
+    if suffix_file in table: # Protecting from possible already modified tables
         continue
     data = Table.read(table, format='csv')
     if len(data) == 100: # Table with all 100 times are skipped
@@ -33,7 +36,7 @@ for table in tables:
         data.add_row(diff_row)
 
     data.sort('SnapNUm', reverse=True) # Reverse sort on SnapNUm to fit the reference file structure
-    data.write(table[:-3] + 'JB.csv', format='csv', overwrite=True) # Saving with a different suffix
+    data.write(table[:-3] + suffix_file, format='csv', overwrite=True) # Saving with a different suffix
 
 print('Process completed successfully')
 exit(0)
