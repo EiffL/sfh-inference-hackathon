@@ -65,6 +65,7 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
   def _generate_examples(self, fits_dir_path, majormergers_path):
     """Yields examples."""
     from astropy.io import fits # To open FITS files
+    from astropy.cosmology import Planck13 # To convert redshift to loopback time
     import pandas as pd # To extract the SnapNumLastMajorMerger values from TNG100_SDSS_MajorMergers.csv
 
     # Create new dataframe with the columns 'Illustris_ID' and 'SnapNumLastMajorMerger'
@@ -86,5 +87,5 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
       # Convert it to redshift using the snap2z dataframe
       last_major_merger = snap2z.loc[napNumLastMajorMerger,'z']
       # Yiel with i because in our case object_id will be the same for the 4 different projections
-      yield i, {'image': image.astype("float32"), 'last_major_merger': last_major_merger}
+      yield i, {'image': image.astype("float32"), 'last_major_merger': Planck13.loopback(last_major_merger)}
 
