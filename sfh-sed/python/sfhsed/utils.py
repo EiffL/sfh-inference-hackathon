@@ -3,6 +3,8 @@ import numpy as np
 import tensorflow_datasets as tfds
 import tensorflow as tf
 
+print("Importing utils.py...")
+
 class SubHalos:
     def __init__(self, data, wl, times):
         self._data = data
@@ -228,7 +230,9 @@ def create_data_array(path=None, limit=None):
     """Create the array of data using the given photometry catalog.
     Optionally limit the number of rows to the given limit.
     """
-
+    print("Inside create_data_array")
+    import sys
+    sys.stdout.flush()
     phot_cat = read_phot_cat(path=path)
 
     if limit is None:
