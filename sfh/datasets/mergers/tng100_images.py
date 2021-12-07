@@ -47,6 +47,7 @@ import tensorflow_datasets as tfds
 
 # TODO(tng100_images): Markdown description  that will appear on the catalog page.
 _DESCRIPTION = """
+Creates a tf dataset from Illustris TNG100 NOISY images.
 """
 
 # TODO(tng100_images): BibTeX citation
@@ -64,7 +65,7 @@ class Tng100Images(tfds.core.GeneratorBasedBuilder):
 
   def _info(self) -> tfds.core.DatasetInfo:
     """Returns the dataset metadata."""
-    # TODO(tng100_images): Specifies the tfds.core.DatasetInfo object
+    # Specifies the tfds.core.DatasetInfo object
     return tfds.core.DatasetInfo(
         builder=self,
         description=_DESCRIPTION,
@@ -77,25 +78,20 @@ class Tng100Images(tfds.core.GeneratorBasedBuilder):
         # If there's a common (input, target) tuple from the
         # features, specify them here. They'll be used if
         # `as_supervised=True` in `builder.as_dataset`.
-        supervised_keys=("image","last_major_merger"),  # e.g. ('image', 'label')
+        supervised_keys=("image","last_major_merger"),
         homepage='https://dataset-homepage/',
         citation=_CITATION,
     )
 
   def _split_generators(self, dl_manager: tfds.download.DownloadManager):
     """Returns SplitGenerators."""
-    # TODO(tng100_images): Downloads the data and defines the splits
-    # dl_manager is a tfds.download.DownloadManager that can be used to
-    # download and extract URLs
+    #For Jean Zay, change the paths
     data_path = os.path.expandvars("$ALL_CCFRWORK/SFH/tng100/")
     snaps_dir = os.path.join(os.path.dirname(__file__), './')
     cat_snapshot_path=snaps_dir+"/snap2lookback.csv"
     cat_merger_path=data_path+"/mergers/TNG100_SDSS_MajorMergers.csv"
     img_dir=data_path+"/images/TNG100/sdss/sn99/Outputs/"
-    #For local test
-    #data_path = os.path.join(dl_manager.manual_dir, img_dir)
-    #For Jean Zay
-    #data_path=dl_manager.manual_dir
+
     return [
         tfds.core.SplitGenerator(
             name=tfds.Split.TRAIN,
@@ -114,18 +110,22 @@ class Tng100Images(tfds.core.GeneratorBasedBuilder):
 
     # For each galaxy, stacks the four bands
     for i in range(len(gal_ids)):
-        #try:
+      try:
         #Stacks the bands
         img=stack_bands(img_dir,gal_ids[i])
         #Retrieves the lookback time of the last major merger
         num_last_merger=int(catalog_merger_time[catalog_merger_time["Illustris_ID"]==gal_ids[i]]["SnapNumLastMajorMerger"])
-        lbt=float(catalog_snapshot[catalog_snapshot["Snapshot"]==num_last_merger]["Lookback"])
-        #Returns the image, the galaxy ID and the lookback time of the last major merger
-        #except:
-        #    print("Problem for gal_ids",gal_ids[i])
-        #    continue
+        #Some galaxies have empty values for the lookback time. In such cases, we set the lbt to negative value and then we do not yield these galaxies
+        try:
+            lbt=float(catalog_snapshot[catalog_snapshot["Snapshot"]==num_last_merger]["Lookback"])
+        except:
+            lbt=-42
+      #Returns the image, the galaxy ID and the lookback time of the last major merger
+      except:
+        print("Problem for gal_ids",gal_ids[i])
+        continue
 
-      yield i, {"image":img.astype("float32"),
-                  "last_major_merger":lbt,
-                "object_id":gal_ids[i]
-      }
+     if lbt>0:
+          yield i, {"image":img.astype("float32"),
+                      "last_major_merger":lbt,
+                    "object_id":gal_ids[i]}
