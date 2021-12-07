@@ -109,11 +109,11 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
                 tmp_sfh[k][99-sfh['SnapNUm']] = sfh[k]
             
             yield object_id, {
-                "time": tmp_sfh['time'],
-                "SFR_halfRad": tmp_sfh['SFR_halfRad'],
-                "SFR_Rad": tmp_sfh['SFR_Rad'],
-                "SFR_Max": tmp_sfh['SFR_Max'],
-                "Mstar_Half": tmp_sfh['Mstar_Half'],
-                "Mstar": tmp_sfh['Mstar'],
+                "time": np.array(tmp_sfh['time']).astype('float32'),
+                "SFR_halfRad": np.array(tmp_sfh['SFR_halfRad']).astype('float32'),
+                "SFR_Rad": np.array(tmp_sfh['SFR_Rad']).astype('float32'),
+                "SFR_Max": np.array(tmp_sfh['SFR_Max']).astype('float32'),
+                "Mstar_Half": np.array(tmp_sfh['Mstar_Half']).astype('float32'),
+                "Mstar": np.array(tmp_sfh['Mstar']).astype('float32'),
                 "Mask": mask
             }
