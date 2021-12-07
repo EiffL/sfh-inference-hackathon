@@ -75,7 +75,8 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
       index_col='Illustris_ID'
     )
     # Create new dataframe with equivalence values between Snapshots numbers and redshifts, age, loopback time
-    snaps = pd.read_csv("./snaps.csv", index_col=0, names=['sn', 'z', 'age' 'lbt'])
+    snaps_dir = os.path.join(os.path.dirname(__file__), './')
+    snaps = pd.read_csv(snaps_dir+"/snaps.csv", index_col=0, names=['sn', 'z', 'age' 'lbt'])
     
     for i, fits_file in enumerate(os.listdir(fits_dir_path)):
       # Get object_id from the current FITS file name
