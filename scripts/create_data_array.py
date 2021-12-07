@@ -70,7 +70,12 @@ def create_data_array(phot_cat, limit=None):
     """
     if limit is None:
         limit = len(phot_cat)
-    dims = (limit, 1 + 143 + 2*100)
+    # 0: SubHaloID
+    # 1-144: fluxes
+    # 144-244: SFR
+    # 244-344: Mstar
+    # 344-353: slots for summaries data (to be generated later)
+    dims = (limit, 1 + 143 + 2*100 + 9)
     arr = np.zeros(dims)
     # I know there are 100 snapshots maximum
     all_sfh_times = [set() for i in range(100)]
@@ -126,5 +131,9 @@ if __name__ == '__main__':
     phot_cat = read_phot_cat(path=args.path)
     times, data = create_data_array(phot_cat, limit=args.limit)
     wl = read_wavelength(path=args.path)
+    # Let's sort the wl, fluxes
+    idx_sort = np.argsort(wl)
+    data[:, 1:144] = data[:, 1:144][:, idx_sort]
+    wl = wl[idx_sort]
     print(f"Writing to: {args.output}")
     np.savez(args.output, data=data, times=times, wl=wl)
