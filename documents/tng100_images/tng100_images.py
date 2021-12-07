@@ -106,11 +106,11 @@ class Tng100Images(tfds.core.GeneratorBasedBuilder):
   def _generate_examples(self,img_dir=None,cat_snapshot_path=None,cat_merger_path=None):
     """Yields examples."""
     # TODO(tng100_images): Yields (key, example) tuples from the dataset
-    catalog_merger_time=pd.read_csv(cat_merger_path)
+    catalog_merger_time=pd.read_csv(cat_merger_path)  
     catalog_snapshot=pd.read_csv(cat_snapshot_path)
     # Keep the IDs of the galaxy for which the four bands are available
     gal_ids=keep_common_filters(img_dir)
-
+ 
     # For each galaxy, stacks the four bands
     for i in range(len(gal_ids)):
       try:
@@ -119,12 +119,15 @@ class Tng100Images(tfds.core.GeneratorBasedBuilder):
         #Retrieves the lookback time of the last major merger
         num_last_merger=int(catalog_merger_time[catalog_merger_time["Illustris_ID"]==gal_ids[i]]["SnapNumLastMajorMerger"])
         lbt=float(catalog_snapshot[catalog_snapshot["Snapshot"]==num_last_merger]["Lookback"])
-      #Returns the image, the galaxy ID and the lookback time of the last major merger
-      except:
+      #Returns the image, the galaxy ID and the lookback time of the last major merger 
+      except: 
         print("Problem for gal_ids",gal_ids[i])
         continue
 
       yield i, {"image":img.astype("float32"),
                   "last_major_merger":lbt,
-                  "object_id":gal_ids[i]
-        }
+                "object_id":gal_ids[i]
+      }
+    
+    
+
