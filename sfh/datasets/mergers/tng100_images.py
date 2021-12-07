@@ -114,16 +114,16 @@ class Tng100Images(tfds.core.GeneratorBasedBuilder):
 
     # For each galaxy, stacks the four bands
     for i in range(len(gal_ids)):
-      try:
+        #try:
         #Stacks the bands
         img=stack_bands(img_dir,gal_ids[i])
         #Retrieves the lookback time of the last major merger
         num_last_merger=int(catalog_merger_time[catalog_merger_time["Illustris_ID"]==gal_ids[i]]["SnapNumLastMajorMerger"])
         lbt=float(catalog_snapshot[catalog_snapshot["Snapshot"]==num_last_merger]["Lookback"])
-      #Returns the image, the galaxy ID and the lookback time of the last major merger
-      except:
-        print("Problem for gal_ids",gal_ids[i])
-        continue
+        #Returns the image, the galaxy ID and the lookback time of the last major merger
+        #except:
+        #    print("Problem for gal_ids",gal_ids[i])
+        #    continue
 
       yield i, {"image":img.astype("float32"),
                   "last_major_merger":lbt,
