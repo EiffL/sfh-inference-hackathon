@@ -27,11 +27,11 @@ def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):
     return summary_times, summary_masses, summary_indices
 
 
-def plot_with_summaries(fig, axs, index, flux, wl, sfh):
+def plot_with_summaries(axs, index, flux, wl, sfh):
     '''
-    Plot the galaxy infos (SED, SFR, Mass) with the 0.5 and 0.9 mass summaries
-    input: fig: the figure for the sublots with all indices
-           axs:  the corresponding axes of the figure
+    Plot the galaxy infos (SED, SFR, Mass) with the summaries
+    input:
+           axs: the axes of the plt.subplots with
            index: the ith index of the galaxies you want to plot
            flux: the flux of the galaxy
            wl: the wavelenghthes (x axis)
@@ -39,7 +39,7 @@ def plot_with_summaries(fig, axs, index, flux, wl, sfh):
     output: nothing, but plot the figure
     '''
 
-    axs[index, 0].scatter(np.array(wl)[np.array(wl)<10**3], np.log10(flux), s=10)
+    axs[index, 0].scatter(np.array(wl)[np.array(wl) < 10**3], np.log10(flux), s=10)
     axs[index, 0].set_xlabel("wavelength [$\mu m$]")
     axs[index, 0].set_xscale('log')
     axs[index, 0].set_ylabel("$\log(f)$ [Jy]")
@@ -47,17 +47,12 @@ def plot_with_summaries(fig, axs, index, flux, wl, sfh):
     axs[index, 1].set_ylabel("SFR")
     axs[index, 1].plot(sfh.time, sfh.SFR_halfRad)
     axs[index, 2].plot(sfh.time, np.log10(sfh.Mstar_Half)+10)
-    half_mass, half_time, half_mass_index = find_summaries(sfh, 0.5)
-    ninth_mass, ninth_time, ninth_mass_index = find_summaries(sfh, 0.9)
-    axs[index, 2].set_title(f'{half_mass:.2f}, {half_time:.2f}', fontsize=6)
-
-    # axs[index, 2].set_title(half_mass, half_time)
-    # print(np.nanmin(np.log10(sfh.Mstar_Half)+10), np.max(np.log10(sfh.Mstar_Half)+10))
-    axs[index, 2].vlines(sfh.time[half_mass_index], 6.5, np.max(np.log10(sfh.Mstar_Half)+10)+0.5, label='0.5')
-    axs[index, 2].vlines(sfh.time[ninth_mass_index], 6.5, np.max(np.log10(sfh.Mstar_Half)+10)+0.5, color='red', label='0.9')
+    half_times, half_masses, half_indices = find_summaries(sfh.Mstar_Half, sfh.time)
+    for i in range(len(half_masses)):
+        axs[index, 2].vlines(sfh.time[half_indices[i]], 6.5, np.max(np.log10(sfh.Mstar_Half)+10)+0.5)
+        axs[index, 2].text(sfh.time[half_indices[i]], 6.3, (i+1)/10, rotation='vertical')
     axs[index, 2].set_xlabel("Time")
     axs[index, 2].set_ylabel("Mstar")
-    axs[index, 2].legend()
 
 
 def smoothen(x, y):
