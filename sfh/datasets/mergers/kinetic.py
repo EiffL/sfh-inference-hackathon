@@ -79,15 +79,13 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
     for i, fits_file in enumerate(os.listdir(fits_dir_path)):
       # Get object_id from the current FITS file name
       object_id = int(fits_file.split('_')[3])
-      print("OBJECT_ID:/")
-      print(object_id)
-      print(fits_file.split('_'))
       # Extract image data from the FITS file
       image = fits.getdata(fits_dir_path+fits_file, ext=0)
       # Get snapshot number of the last major merger for the current object_id from the mergers_data dataframe
-      napNumLastMajorMerger = mergers_data.loc[object_id,'SnapNumLastMajorMerger']
-      # Convert snapshot number to lookback time using the snaps dataframe
-      last_major_merger = snaps.loc[napNumLastMajorMerger,'lbt']
-      # Yiel with i because in our case object_id will be the same for the 4 different projections
-      yield i, {'image': image.astype("float32"), 'last_major_merger': last_major_merger, 'object_id': object_id}
+      SnapNumLastMajorMerger = mergers_data.loc[object_id,'SnapNumLastMajorMerger']
+      if(SnapNumLastMajorMerger>0): # Exclude galaxies for which there is no lastMajorMerger event
+        # Convert snapshot number to lookback time using the snaps dataframe
+        last_major_merger = snaps.loc[SnapNumLastMajorMerger,'lbt']
+        # Yiel with i because in our case object_id will be the same for the 4 different projections
+        yield i, {'image': image.astype("float32"), 'last_major_merger': last_major_merger, 'object_id': object_id}
 
