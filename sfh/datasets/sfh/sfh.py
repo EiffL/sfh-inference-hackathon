@@ -48,17 +48,17 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
             features=tfds.features.FeaturesDict(
                 {
                     "time": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "SFR_halfRad": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "SFR_Rad": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "SFR_Max": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "Mstar_Half": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "Mstar": tfds.features.Tensor(
-                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float64),
+                        shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32),
                     "Mask": tfds.features.Tensor(
                         shape=(N_TIMESTEPS,), dtype=tf.dtypes.int32),
                 }
