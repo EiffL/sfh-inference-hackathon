@@ -81,6 +81,7 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
       object_id = int(fits_file.split('_')[3])
       print("OBJECT_ID:/")
       print(object_id)
+      print(fits_file.split('_'))
       # Extract image data from the FITS file
       image = fits.getdata(fits_dir_path+fits_file, ext=0)
       # Get snapshot number of the last major merger for the current object_id from the mergers_data dataframe
