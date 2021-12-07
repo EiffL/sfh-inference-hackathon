@@ -1,7 +1,11 @@
 import numpy as np
 import tensorflow_datasets as tfds
 import tensorflow as tf
+<<<<<<< HEAD
 from sfhsed import utils
+=======
+import utils
+>>>>>>> reorganise, dataset from original data
 
 ''' Dataset builder '''
 # TODO(my_dataset): Markdown description  that will appear on the catalog page.
