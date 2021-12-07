@@ -111,8 +111,8 @@ class Tng100Images(tfds.core.GeneratorBasedBuilder):
                   "last_major_merger":lbt,
                   "object_id":gal_ids[i]
         }
-    except: 
-      print("Problem for gal_ids",gal_ids[i])
+      except: 
+        print("Problem for gal_ids",gal_ids[i])
   
     
     
