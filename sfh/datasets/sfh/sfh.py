@@ -96,11 +96,11 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
         empty_sfh['SFR_Max'] = 0.
         empty_sfh['Mstar_Half'] = 0.
         empty_sfh['Mstar'] = 0
+	
+        for filename in glob.glob(data_path+"/*.csv"):
 
-        for filename in glob.glob(data_path+"*.csv"):
-
-            object_id = filename.stem.split("_")[-1]
-            print(filename)
+            object_id = filename.split("_")[-1]
+            #print(filename)
             sfh = Table.read(filename)
             mask = np.zeros((N_TIMESTEPS,), dtype=np.int32)
             mask[99-sfh['SnapNUm']] = 1.
@@ -110,11 +110,11 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
                 tmp_sfh[k][99-sfh['SnapNUm']] = sfh[k]
             
             yield object_id, {
-                "time": tmp_sfh['time'].value,
-                "SFR_halfRad": tmp_sfh['SFR_halfRad'].value,
-                "SFR_Rad": tmp_sfh['SFR_Rad'].value,
-                "SFR_Max": tmp_sfh['SFR_Max'].value,
-                "Mstar_Half": tmp_sfh['Mstar_Half'].value,
-                "Mstar": tmp_sfh['Mstar'].value,
+                "time": tmp_sfh['time'],
+                "SFR_halfRad": tmp_sfh['SFR_halfRad'],
+                "SFR_Rad": tmp_sfh['SFR_Rad'],
+                "SFR_Max": tmp_sfh['SFR_Max'],
+                "Mstar_Half": tmp_sfh['Mstar_Half'],
+                "Mstar": tmp_sfh['Mstar'],
                 "Mask": mask
             }
