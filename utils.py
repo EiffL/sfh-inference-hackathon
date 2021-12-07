@@ -5,8 +5,11 @@ import numpy as np
 def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):
 
     ''' compute the half mass and the half time of a galaxy 
-          Input: the sfh
-          Output: the half mass, the corresponding half time, and the index of the mass/time summary
+          Input: 
+                - mass: array. The mass history of the galaxy.
+                - time: array. The corresponding time for the galaxy history.
+                - percentiles: array. The summaries you want to predict by default 0.1, 0.2,..., 0.9. 
+          Output: the time of the summaries, the corresponding masses, and the index of the mass/time summary.
     '''
 
     summary_masses = []
