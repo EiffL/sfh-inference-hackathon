@@ -11,7 +11,7 @@ Data is extracted from:
  - CSV file TNG100_SDSS_MajorMergers.csv
  - FITS files mergers-maps-sn99-moments_TNG100-1_99_<object_id>_stars_<projection_id>__32.fits
 
-The snap2z.csv file contains equivalences between Snapshots numbers and redshifts
+The snap2z.csv file contains equivalences between Snapshots numbers and redshifts, age and loopback time
 
 """
 
@@ -74,8 +74,8 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
       usecols=['Illustris_ID','SnapNumLastMajorMerger'],
       index_col='Illustris_ID'
     )
-    # Create new dataframe with equivalence values between Snapshots numbers and redshifts
-    snap2z = pd.read_csv("snap2z.csv", index_col=0, names=['sn', 'z'])
+    # Create new dataframe with equivalence values between Snapshots numbers and redshifts, age, loopback time
+    snaps = pd.read_csv("snaps.csv", index_col=0, names=['sn', 'z', 'age' 'lbt'])
     
     for i, fits_file in enumerate(os.listdir(fits_dir_path)):
       # Get object_id from the current FITS file name
@@ -84,8 +84,8 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
       image = fits.getdata(fits_dir_path+fits_file, ext=0)
       # Get snapshot number of the last major merger for the current object_id from the mergers_data dataframe
       napNumLastMajorMerger = mergers_data.loc[object_id,'SnapNumLastMajorMerger']
-      # Convert it to redshift using the snap2z dataframe
-      last_major_merger = snap2z.loc[napNumLastMajorMerger,'z']
+      # Convert snapshot number to lookback time using the snaps dataframe
+      last_major_merger = snaps.loc[napNumLastMajorMerger,'lbt']
       # Yiel with i because in our case object_id will be the same for the 4 different projections
-      yield i, {'image': image.astype("float32"), 'last_major_merger': Planck13.loopback(last_major_merger)}
+      yield i, {'image': image.astype("float32"), 'last_major_merger': last_major_merger}
 
