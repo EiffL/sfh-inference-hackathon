@@ -49,7 +49,7 @@ class MergersKinetic(tfds.core.GeneratorBasedBuilder):
 
   def _split_generators(self, dl_manager: tfds.download.DownloadManager):
     """Returns SplitGenerators."""
-    data_path = dl_manager.manual_dir 
+    data_path = os.path.expandvars("$ALL_CCRWORK/SFH/tng100/")
 
     return [
         tfds.core.SplitGenerator(
