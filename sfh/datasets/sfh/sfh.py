@@ -95,14 +95,14 @@ class Sfh(tfds.core.GeneratorBasedBuilder):
         for filename in path.glob("*.csv"):
 
             object_id = filename.stem.split("_")[-1]
-
+            print(filename)
             sfh = Table.read(filename)
             mask = np.zeros((N_TIMESTEPS,), dtype=np.int32)
-            mask[sfh['SnapNUm']] = 1.
+            mask[99-sfh['SnapNUm']] = 1.
             tmp_sfh = empty_sfh.copy() 
             
             for k in empty_sfh.colnames:
-                tmp_sfh[k][sfh['SnapNUm']] = sfh[k]
+                tmp_sfh[k][99-sfh['SnapNUm']] = sfh[k]
             
             yield object_id, {
                 "time": tmp_sfh['time'].value,
