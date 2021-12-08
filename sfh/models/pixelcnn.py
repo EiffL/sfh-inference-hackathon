@@ -7,19 +7,28 @@ from tensorflow.keras import layers
 
 
 def generate_model(n_timesteps, *, n_components=2, kernel_size=3,
-                   n_dilations=5):
+                   n_dilations=5, list_of_dilation_rates=None,
+                   list_of_filters=None):
     """Generate the PixelCNN Keras model.
 
     Parameters
     ----------
-    n_timesteps: int
+    n_timesteps : int
         Number of time steps.
-    n_components: int, default 2
-        Number of components in the Gausian mixture distribution.
-    kernel_size: int, default 3
+    n_components : int, default 2
+        Number of components in the Gaussian mixture distribution.
+    kernel_size : int, default 3
         Size of the convolution kernel.
-    n_dilations: int, default 5
-        Number of dilations.
+    n_dilations : int, default 5
+        Number of dilated convolutions to do. For each convolution, the
+        dilation rate is 2**idx+1 and the number of filters is 2**idx+4.
+    list_of_dilation_rates : list of int or None, default None
+        List of the dilation rates to use in the dilated convolutions. If not
+        None, the n_dilations is not used and filters must be given with the
+        same size.
+    list_of_filters : list of int or None, default None
+        List of the filter number for each of the dilated convolutions. Must be
+        of the same size as list_of_dilation_rates
 
     Returns
     -------
@@ -56,10 +65,15 @@ def generate_model(n_timesteps, *, n_components=2, kernel_size=3,
         )
     )
 
-    for dilation_idx in range(n_dilations):
-        dilation_rate = 2**(dilation_idx+1)
-        nb_filters = 2**(dilation_idx+4)
+    if list_of_dilation_rates is None:
+        list_of_dilation_rates = [2**(i+1) for i in range(n_dilations)]
+        list_of_filters = [2**(i+4) for i in range(n_dilations)]
+    elif len(list_of_filters) != len(list_of_dilation_rates):
+        raise ValueError(
+            "filters and list_of_dilation_rates must have the same length")
 
+    for dilation_rate, nb_filters in zip(list_of_dilation_rates,
+                                         list_of_filters):
         pixel_cnn.add(
             keras.layers.Conv1D(
                 filters=nb_filters,
