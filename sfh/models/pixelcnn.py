@@ -6,7 +6,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 
 
-def generate_model(n_timesteps, *, n_components=2, kernel_size=3,
+def generate_model(n_timesteps, *, n_channels=1, n_components=2, kernel_size=3,
                    n_dilations=5, list_of_dilation_rates=None,
                    list_of_filters=None):
     """Generate the PixelCNN Keras model.
@@ -15,6 +15,8 @@ def generate_model(n_timesteps, *, n_components=2, kernel_size=3,
     ----------
     n_timesteps : int
         Number of time steps.
+    n_channels : int, default 1
+        Number of channels in the dataset
     n_components : int, default 2
         Number of components in the Gaussian mixture distribution.
     kernel_size : int, default 3
@@ -86,7 +88,7 @@ def generate_model(n_timesteps, *, n_components=2, kernel_size=3,
     pixel_cnn.add(keras.layers.Dense(params_size))
     pixel_cnn.add(tfp.layers.MixtureNormal(n_components, event_shape))
 
-    pixel_cnn.build(input_shape=(None, n_timesteps, 1))
+    pixel_cnn.build(input_shape=(None, n_timesteps, n_channels))
 
     # Use the negative log-likelihood as loss function.
     def negloglik(y, q):

@@ -3,11 +3,22 @@ import tensorflow as tf
 import tensorflow_datasets as tfds
 
 def preprocessing(example):
-    
     return tf.reshape(example['SFR_Max'],(-1,100,1)), \
            tf.reshape(example['SFR_Max'],(-1,100,1))
 
-def input_fn(mode='train', batch_size=64, dataset_name='sfh', data_dir=None):
+def preprocessing_wmass(example):
+    mass = example['Mstar'][:,-1]
+    mass_half = example['Mstar_Half'][:,-1]
+    tiler = tf.constant([100])
+    mass = tf.reshape(tf.tile(mass, tiler),(-1,100,1))
+    mass_half = tf.reshape(tf.tile(mass_half, tiler),(-1,100,1))
+    sfr = tf.reshape(example['SFR_Max'],(-1,100,1))
+    res = tf.concat([sfr, mass, mass_half], axis=2)
+    return res, res
+
+def input_fn(mode='train', batch_size=64, 
+             dataset_name='sfh', data_dir=None,
+             include_mass=False):
     """
     mode: 'train' or 'test'
     """
@@ -19,18 +30,29 @@ def input_fn(mode='train', batch_size=64, dataset_name='sfh', data_dir=None):
         dataset = tfds.load(dataset_name, split='train[80%:]', data_dir=data_dir)
     
     dataset = dataset.batch(batch_size, drop_remainder=True)
-    dataset = dataset.map(preprocessing) # Apply data preprocessing
+    if include_mass:
+        dataset = dataset.map(preprocessing_wmass) # Apply data preprocessing
+    else : 
+        dataset = dataset.map(preprocessing)
     dataset = dataset.prefetch(-1)       # fetch next batches while training current one (-1 for autotune)
-    return dataset, tf.data.experimental.cardinality(dataset).numpy()
+    return dataset
 
-def predictor(model, sample_size, nsteps=100):
+def predictor(model, sample_size, nsteps=100, n_channels=1, mode='sample'):
     """
+    mode should be either 'sample' or 'mean'
     """
-    res = np.zeros((sample_size, nsteps,1))
+    assert mode in ['sample', 'mean']
+    res = np.zeros((sample_size, nsteps, n_channels))
+    if n_channels==3:
+        res[:,:,1] = np.random.uniform(10**(8.5-10), 1, size=(sample_size,))
+        res[:,:,2] = res[:,:,1]*np.random.uniform(0.6, 0.7, size=(sample_size,))
     for i in range(nsteps):
-        tmp = model(res).sample()
-        res[0,i] = tmp[0,i]
-    return res
+        if mode=='sample':
+            tmp = model(res).sample()
+        if mode=='mean':
+            tmp = model(res).mean()
+        res[:,i,0] = tmp[:,i]
+    return res[:,:,0]
 
 def pass_sample(model, sample):
     """
