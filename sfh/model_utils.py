@@ -42,22 +42,24 @@ def pass_sample(model, sample):
     p_sample = model(sample).sample()
     return mean, std, p_sample
 
-def finish_sample(model, sample, nsteps=100):
+def finish_sample(model, sample, nsteps=100, mode='sample'):
     """
+    
     For now only works with 1 sample, not batch !
     
+    mode should be either 'sample' or 'mean'
     sample : a 1d Tensor SFR sequence, of cardinality<nsteps
     nsteps : total length of output sequence
     """
     assert sample.numpy().reshape((-1,)).shape[0]<nsteps
     n_remain = nsteps - sample.numpy().reshape((-1,)).shape[0]
     res = np.zeros((1, nsteps,1))
-    print(sample.numpy().reshape((-1,)))
     res[0,:nsteps-n_remain,0] = sample.numpy()
-    print(sample.numpy())
-    print(res.reshape((-1,)))
     for i in range(nsteps-n_remain, nsteps):
-        tmp = model(res).mean()
+        if mode=='sample':
+            tmp = model(res).sample()
+        if mode=='mean':
+            tmp = model(res).mean()
         res[0,i] = tmp[0,i]
     return res
 
