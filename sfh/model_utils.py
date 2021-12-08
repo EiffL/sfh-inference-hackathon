@@ -4,19 +4,19 @@ import tensorflow_datasets as tfds
 
 def preprocessing(example):
     
-    return tf.reshape(tf.cast(example['SFR_Max'], dtype=tf.float32),(-1,100,1)), \
-           tf.reshape(tf.cast(example['SFR_Max'], dtype=tf.float32),(-1,100,1))
+    return tf.reshape(example['SFR_Max'],(-1,100,1)), \
+           tf.reshape(example['SFR_Max'],(-1,100,1))
 
-def input_fn(mode='train', batch_size=64, dataset_name='sfh'):
+def input_fn(mode='train', batch_size=64, dataset_name='sfh', data_dir=None):
     """
     mode: 'train' or 'test'
     """
     if mode == 'train':
-        dataset = tfds.load(dataset_name, split='train[:80%]')
+        dataset = tfds.load(dataset_name, split='train[:80%]', data_dir=data_dir)
         #dataset = dataset.repeat()
         dataset = dataset.shuffle(10000)
     else:
-        dataset = tfds.load(dataset_name, split='train[80%:]')
+        dataset = tfds.load(dataset_name, split='train[80%:]', data_dir=data_dir)
     
     dataset = dataset.batch(batch_size, drop_remainder=True)
     dataset = dataset.map(preprocessing) # Apply data preprocessing
