@@ -20,13 +20,16 @@ class SubHalos:
         return cls(data, wl, times)
 
     def __getitem__(self, i):
-        return SubHalo(self._data[i], wl=self._wavelengths, times=self._times)
+        if type(i) is int:
+            return SubHalo(self._data[i], wl=self._wavelengths, times=self._times)
+        elif type(i) is slice:
+            return [SubHalo(d, wl=self.wl, times=self.sfh_times) for d in self._data[i]] 
 
     def __len__(self):
         return len(self._data)
     
     @property
-    def shf_times(self):
+    def sfh_times(self):
         return self._times
 
     @property
@@ -41,6 +44,8 @@ class SubHalo:
         self._mstar = row[244:344]
         self._sfr = row[144:244]
         self._quantiles = row[344:353]
+        self._has_sfh = row[354] == 0.0
+        self._last_over_max = row[353]
         self._wl = wl
         self._times = times
 
@@ -79,6 +84,14 @@ class SubHalo:
     @property
     def quantiles(self):
         return self._quantiles
+
+    @property
+    def has_sfh(self):
+        return self._has_sfh
+
+    @property
+    def last_over_max(self):
+        return self._last_over_max
 
 
 def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):

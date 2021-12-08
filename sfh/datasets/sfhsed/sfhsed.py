@@ -16,8 +16,9 @@ _CITATION = """
 class Sfhsed(tfds.core.GeneratorBasedBuilder):
     """DatasetBuilder for my_dataset dataset."""
 
-    VERSION = tfds.core.Version('1.0.6')
+    VERSION = tfds.core.Version('1.1.0')
     RELEASE_NOTES = {
+        '1.1.0': 'Add has_sfh, last_over_max information',
         '1.0.6': 'no limit catalog',
     }
 
@@ -32,6 +33,8 @@ class Sfhsed(tfds.core.GeneratorBasedBuilder):
                 'mass': tfds.features.Tensor(shape=(100,), dtype=tf.float32),
                 'time': tfds.features.Tensor(shape=(100,), dtype=tf.float32),
                 'quantile': tfds.features.Tensor(shape=(9,), dtype=tf.float32),
+                'has_sfh': tf.bool,
+                'last_over_max': tf.float32,
                 'object_id': tf.float32,
                 # These are the features of your dataset like images, labels ...
             }),
@@ -73,9 +76,13 @@ class Sfhsed(tfds.core.GeneratorBasedBuilder):
             object_id = subhalo.shid
             mass = subhalo.mstar
             time = subhalo.times
+            has_sfh = subhalo.has_sfh
+            last_over_max = subhalo.last_over_max
         # Yiel with i because in our case object_id will be the same for the 4 different projections
             yield i, {'flux': flux.astype("float32"),
                       'mass': mass.astype("float32"),
                       'time': time.astype('float32'),
                       'quantile': quantile.astype('float32'),
+                      'has_sfh': has_sfh,
+                      'last_over_max': np.float32(last_over_max),
                       'object_id': object_id}
