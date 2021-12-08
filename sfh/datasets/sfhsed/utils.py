@@ -284,7 +284,7 @@ def create_data_array(path=None, limit=None):
         arr[index, 344:353] = summaries
         arr[index, 353] = sfr_mstar_half[0] / max(sfr_mstar_half)
 
-    times = np.asarray([s.pop() for s in all_sfh_times])
+    times = np.asarray([s.pop() for s in all_sfh_times])[::-1]
     wl = read_wavelength(path=path)
     idx_sort = np.argsort(wl)
     arr[:, 1:144] = arr[:, 1:144][:, idx_sort]
