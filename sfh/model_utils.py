@@ -21,7 +21,7 @@ def input_fn(mode='train', batch_size=64, dataset_name='sfh', data_dir=None):
     dataset = dataset.batch(batch_size, drop_remainder=True)
     dataset = dataset.map(preprocessing) # Apply data preprocessing
     dataset = dataset.prefetch(-1)       # fetch next batches while training current one (-1 for autotune)
-    return dataset, tf.data.experimental.cardinality(dset).numpy()
+    return dataset, tf.data.experimental.cardinality(dataset).numpy()
 
 def predictor(model, sample_size, nsteps=100):
     """
