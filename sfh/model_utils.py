@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-import tensorflow_dataset ast tfds
+import tensorflow_datasets as tfds
 
 def preprocessing(example):
     
@@ -24,15 +24,40 @@ def input_fn(mode='train', batch_size=64, dataset_name='sfh'):
     return dataset, tf.data.experimental.cardinality(dset).numpy()
 
 def predictor(model, sample_size, nsteps=100):
+    """
+    """
     res = np.zeros((sample_size, nsteps,1))
     for i in range(nsteps):
         tmp = model(res).sample()
         res[0,i] = tmp[0,i]
     return res
 
-def pass_sample(model, sample, n_pass=100):
+def pass_sample(model, sample):
+    """
+    For now only works with 1 sample, not batch !
+    """
     sample = tf.reshape(sample,(1, 100, 1))
     mean = model(sample).mean()
     std = model(sample).stddev()
     p_sample = model(sample).sample()
     return mean, std, p_sample
+
+def finish_sample(model, sample, nsteps=100):
+    """
+    For now only works with 1 sample, not batch !
+    
+    sample : a 1d Tensor SFR sequence, of cardinality<nsteps
+    nsteps : total length of output sequence
+    """
+    assert sample.numpy().reshape((-1,)).shape[0]<nsteps
+    n_remain = nsteps - sample.numpy().reshape((-1,)).shape[0]
+    res = np.zeros((1, nsteps,1))
+    print(sample.numpy().reshape((-1,)))
+    res[0,:nsteps-n_remain,0] = sample.numpy()
+    print(sample.numpy())
+    print(res.reshape((-1,)))
+    for i in range(nsteps-n_remain, nsteps):
+        tmp = model(res).mean()
+        res[0,i] = tmp[0,i]
+    return res
+
