@@ -13,12 +13,12 @@ _CITATION = """
 """
 
 
-class MyDataset(tfds.core.GeneratorBasedBuilder):
+class Sfhsed(tfds.core.GeneratorBasedBuilder):
     """DatasetBuilder for my_dataset dataset."""
 
-    VERSION = tfds.core.Version('1.0.4')
+    VERSION = tfds.core.Version('1.0.6')
     RELEASE_NOTES = {
-        '1.0.4': '9 quantiles',
+        '1.0.6': 'no limit catalog',
     }
 
     def _info(self) -> tfds.core.DatasetInfo:
@@ -72,10 +72,10 @@ class MyDataset(tfds.core.GeneratorBasedBuilder):
             quantile = subhalo.quantiles
             object_id = subhalo.shid
             mass = subhalo.mstar
-        time = utils.subhalo.times
+            time = subhalo.times
         # Yiel with i because in our case object_id will be the same for the 4 different projections
-        yield i, {'flux': flux.astype("float32"),
-                  'mass': mass.astype("float32"),
-                  'time': time.astype('float32'),
-                  'quantile': quantile.astype('float32'),
-                  'object_id': object_id}
+            yield i, {'flux': flux.astype("float32"),
+                      'mass': mass.astype("float32"),
+                      'time': time.astype('float32'),
+                      'quantile': quantile.astype('float32'),
+                      'object_id': object_id}

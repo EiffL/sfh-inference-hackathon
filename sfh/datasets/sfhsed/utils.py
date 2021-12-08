@@ -20,7 +20,7 @@ class SubHalos:
         return cls(data, wl, times)
 
     def __getitem__(self, i):
-        return SubHalo(self._raw[i], wl=self._wavelengths, times=self._times)
+        return SubHalo(self._data[i], wl=self._wavelengths, times=self._times)
 
     def __len__(self):
         return len(self._data)
@@ -40,6 +40,7 @@ class SubHalo:
         self._mags = row[1:144]
         self._mstar = row[244:344]
         self._sfr = row[144:244]
+        self._quantiles = row[344:353]
         self._wl = wl
         self._times = times
 
@@ -74,6 +75,10 @@ class SubHalo:
     @property
     def times(self):
         return self._times
+
+    @property
+    def quantiles(self):
+        return self._quantiles
 
 
 def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):
