@@ -18,7 +18,7 @@ with mirrored_strategy.scope():
 model.summary()
 
 # "Hyperparameters"
-LEARNING_RATE=0.0001 ; LEARNING_RATE_EXP_DECAY=0.9
+LEARNING_RATE=0.001 ; LEARNING_RATE_EXP_DECAY=0.9
 STEPS_PER_EPOCH=20000//128
 EPOCHS = 100
 
