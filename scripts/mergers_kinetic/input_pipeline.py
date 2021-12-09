@@ -55,13 +55,13 @@ def input_fn(mode='train', batch_size=64):
 
   if mode == 'train':
     dataset = tfds.load('tng100', split='train[:80%]', data_dir=data_dir) 
-    dataset = dataset.filter(lambda fd: fd['last_major_merger'] > 0.8) # Filter: keep only last_major_merger < 3 Gy
+    #dataset = dataset.filter(lambda fd: fd['last_major_merger'] > 0.8) # Filter: keep only last_major_merger < 3 Gy
     dataset = dataset.map(preprocessing) # Apply data preprocessing
     dataset = dataset.repeat()
     dataset = dataset.shuffle(10000)
   else:
     dataset = tfds.load('tng100', split='train[80%:]', data_dir=data_dir)
-    dataset = dataset.filter(lambda fd: fd['last_major_merger'] > 0.8) # Filter: keep only last_major_merger < 3 Gy
+    #dataset = dataset.filter(lambda fd: fd['last_major_merger'] > 0.8) # Filter: keep only last_major_merger < 3 Gy
     dataset = dataset.map(preprocessing) # Apply data preprocessing
   
   dataset = dataset.batch(batch_size, drop_remainder=True)
