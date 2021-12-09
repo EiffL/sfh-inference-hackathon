@@ -14,4 +14,4 @@
 module purge
 module load tensorflow-gpu
 set -x
-srun python main.py
+srun python main_mse.py
