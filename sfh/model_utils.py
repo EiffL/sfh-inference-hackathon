@@ -64,17 +64,20 @@ def predictor(model, sample_size, nsteps=100, n_channels=1, mode='sample',
               arctan=False, M0=None, SFR0=None, time=None):
     """
     mode should be either 'sample' or 'mean'
+    M0 : have to be in natural Mstar unit
+    SFR0 : should be in the natural dataset unit
     """
     assert mode in ['sample', 'mean']
     res = np.zeros((sample_size, nsteps, n_channels))
     if n_channels>=3:
-        if M0 is not None: res[:,:,1] = M0
-        else : res[:,:,1] = 10**(np.random.uniform(8.5, 10, size=(1,))-10)
-        if SFR0 is not None: res[:,:,2] = SFR0
-        else: res[:,:,2] = np.random.uniform(0.0001, 1, size=(1,))
+        if M0 is not None: res[:,:,1] = np.log(M0/1e10)
+        else : res[:,:,1] = np.log(10**(np.random.uniform(8.5, 10, size=(1,))-10))
+        if SFR0 is not None: res[:,:,2] = np.arctan(SFR0)*2/np.pi
+        else: res[:,:,2] = np.arctan(np.random.uniform(0.0001, 1, size=(1,)))*2/np.pi
+        res[:,0,0] =  res[:,0,2]
     if n_channels==4:
         res[:,:,-1] = time
-    for i in range(nsteps):
+    for i in range(1,nsteps):
         if mode=='sample':
             tmp = model(res).sample()
         if mode=='mean':
