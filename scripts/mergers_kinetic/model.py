@@ -5,17 +5,17 @@ def create_model():
   model.add(tfk.layers.Conv2D(32, kernel_size=5, padding='same', input_shape=(128,128,2), activation='elu', strides=2))
   model.add(tfk.layers.BatchNormalization())
   
-  #model.add(tfk.layers.Conv2D(64, kernel_size=3, padding='same', activation='elu'))
-  #model.add(tfk.layers.BatchNormalization())
+  model.add(tfk.layers.Conv2D(64, kernel_size=3, padding='same', activation='elu'))
+  model.add(tfk.layers.BatchNormalization())
   
-  #model.add(tfk.layers.Conv2D(128, kernel_size=3, padding='same', strides=2, activation='elu'))
-  #model.add(tfk.layers.BatchNormalization())  
+  model.add(tfk.layers.Conv2D(128, kernel_size=3, padding='same', strides=2, activation='elu'))
+  model.add(tfk.layers.BatchNormalization())  
 
-  #model.add(tfk.layers.Conv2D(256, kernel_size=3, padding='same', activation='elu', strides=2))
-  #model.add(tfk.layers.BatchNormalization())
+  model.add(tfk.layers.Conv2D(256, kernel_size=3, padding='same', activation='elu', strides=2))
+  model.add(tfk.layers.BatchNormalization())
 
-  #model.add(tfk.layers.Conv2D(512, kernel_size=3, padding='same', activation='elu', strides=2))
-  #model.add(tfk.layers.BatchNormalization())
+  model.add(tfk.layers.Conv2D(512, kernel_size=3, padding='same', activation='elu', strides=2))
+  model.add(tfk.layers.BatchNormalization())
   
   model.add(tfk.layers.Flatten())
   model.add(tfk.layers.Dense(512))
