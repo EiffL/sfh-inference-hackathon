@@ -45,7 +45,7 @@ def preprocessing(example):
   t2 = example['last_major_merger']
   if(t2<0.8):
     t2=0.8
-  return img, t2
+  return img, tf.constant(t2)
 
 def input_fn(mode='train', batch_size=64):
   """
