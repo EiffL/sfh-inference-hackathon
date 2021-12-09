@@ -30,18 +30,21 @@ def preprocessing(example):
   img1 = tf.where(tf.math.is_inf(img1), tf.zeros_like(img1), img1)
   img2 = tf.where(tf.math.is_inf(img2), tf.zeros_like(img2), img2)
 
-  # Reduce images size
-  img0 = tf.image.resize(img0, [128, 128])
-  img1 = tf.image.resize(img0, [128, 128])
-  img2 = tf.image.resize(img0, [128, 128])
-
-  print(img0.shape)
   # Normalize data
   img0 = tf.math.asinh(img0 / tf.constant(std_stellar_light) * tf.constant(stellar_light_compression) ) / tf.constant(stellar_light_compression)
   img1 = (img1 - tf.constant(mean_velocity)) / tf.constant(std_velocity)
   img2 = (img2 - tf.constant(mean_velocity_disp))/ tf.constant(std_velocity_disp)
 
-  return tf.stack([img0, img1, img2], axis=1), example['last_major_merger']
+  # Reduce images size (drop stellar light)
+  img = tf.stack([img1, img2], axis=2)
+  # Resize images
+  img = tf.image.resize(img, [128, 128])
+
+
+  
+  print(img0.shape)
+
+  return img, example['last_major_merger']
 
 def input_fn(mode='train', batch_size=64):
   """
