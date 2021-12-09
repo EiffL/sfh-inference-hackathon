@@ -20,7 +20,7 @@ def create_model():
     #Define the model
     model = tfk.models.Sequential()
     #1st layer
-    model.add(tfk.layers.Conv2D(32, kernel_size=3, padding='same',input_shape=(128,128,2), activation='relu', strides=2))
+    model.add(tfk.layers.Conv2D(32, kernel_size=3, padding='same',input_shape=(128,128,2), activation='elu', strides=2))
     model.add(tfk.layers.BatchNormalization())
     #2nd layer
     #model.add(tfk.layers.Conv2D(64, kernel_size=3, padding='same', activation='relu'))
@@ -35,10 +35,10 @@ def create_model():
     model.add(tfk.layers.Flatten())
     #Dense
     #model.add(tfk.layers.Dense(512,activation='relu'))
-    model.add(tfk.layers.Dense(256,activation='relu'))
+    model.add(tfk.layers.Dense(256,activation='elu'))
     model.add(tfk.layers.Dropout(0.5))
 
-    model.add(tfk.layers.Dense(128,activation='relu'))
+    model.add(tfk.layers.Dense(128,activation='elu'))
     model.add(tfk.layers.Dropout(0.2))
 
     #Predict a distribution
