@@ -56,7 +56,7 @@ def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):
     return np.array(summary_times).astype('float32')
 #######################
 
-class TNG100(tfds.core.GeneratorBasedBuilder):
+class Tng100(tfds.core.GeneratorBasedBuilder):
   """TNG100 galaxy dataset"""  
 
   VERSION = tfds.core.Version("1.0.0")
@@ -95,7 +95,7 @@ class TNG100(tfds.core.GeneratorBasedBuilder):
 
   def _split_generators(self, dl):
     """Returns generators according to split"""
-    return {tfds.Split.TRAIN: self._generate_examples(dl.manual_dir)}
+    return {tfds.Split.TRAIN: self._generate_examples(str(dl.manual_dir))}
 
   def _generate_examples(self, root_path):
     """Yields examples."""
