@@ -51,12 +51,12 @@ def input_fn(mode='train', batch_size=64):
   data_dir='/gpfsscratch/rech/qrc/commun/tensorflow_datasets'
   #data_dir='/Users/benjamin/SCRATCH/sfh/content/data/'
 
-
+  # 3 cases: train (75%), test (15%) and valid (10%). Full dataset (100%) by default
   if (mode == 'train'):
     dataset = tfds.load('tng100', split='train[:75%]', data_dir=data_dir) 
     dataset = dataset.map(preprocessing) # Apply data preprocessing
-    #dataset = dataset.repeat() # Is it really useful ?
     dataset = dataset.shuffle(20000)
+    #dataset = dataset.repeat() # Is it really useful ?
   elif (mode == 'test'):  
     dataset = tfds.load('tng100', split='train[75%:90%]', data_dir=data_dir)
     dataset = dataset.map(preprocessing) # Apply data preprocessing
