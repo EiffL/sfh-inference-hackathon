@@ -30,6 +30,10 @@ def preprocessing(example):
   img1 = tf.where(tf.is_inf(img1), tf.zeros_like(img1), img1).eval()
   img2 = tf.where(tf.is_inf(img2), tf.zeros_like(img2), img2).eval()
 
+  # Reduce images size
+  img0 = tf.image.resize(img0, [128, 128])
+  img1 = tf.image.resize(img0, [128, 128])
+  img2 = tf.image.resize(img0, [128, 128])
   # Normalize data
   img0 = tf.math.asinh(img0 / tf.constant(std_stellar_light) * tf.constant(stellar_light_compression) ) / tf.constant(stellar_light_compression)
   img1 = (img1 - tf.constant(mean_velocity)) / tf.constant(std_velocity)
