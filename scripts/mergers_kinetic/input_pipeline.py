@@ -1,7 +1,7 @@
 import tensorflow as tf
 import tensorflow_datasets as tfds
 import tensorflow.keras as tfk
-from sfh.datasets import tng100
+from sfh.datasets.tng100 import tng100
 
 
 
