@@ -42,8 +42,8 @@ def input_fn(mode='train', batch_size=64):
   mode: 'train' or 'test'
   """
   # Jean-Zay datasets diretory:
-  #data_dir='/gpfsscratch/rech/qrc/commun/tensorflow_datasets'
-  data_dir='/Users/benjamin/SCRATCH/sfh/content/data/'
+  data_dir='/gpfsscratch/rech/qrc/commun/tensorflow_datasets'
+  #data_dir='/Users/benjamin/SCRATCH/sfh/content/data/'
 
 
   if mode == 'train':
@@ -51,7 +51,7 @@ def input_fn(mode='train', batch_size=64):
     dataset = dataset.repeat()
     dataset = dataset.shuffle(10000)
   else:
-    dataset = tfds.load('tng100', split='train[:80%]', data_dir=data_dir)
+    dataset = tfds.load('tng100', split='train[80%:]', data_dir=data_dir)
 
   dataset = dataset.batch(batch_size, drop_remainder=True)
   dataset = dataset.map(preprocessing) # Apply data preprocessing
