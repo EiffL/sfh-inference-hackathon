@@ -115,7 +115,7 @@ class Tng100(tfds.core.GeneratorBasedBuilder):
     phot_cat = Table.read(root_path+"/phot_TNG100_dylan_143.csv")
     phot_cat['subhaloIDs'] = phot_cat['subhaloIDs'].astype('int') # convert to int
 
-    for filename in glob.glob(root_path+"/cats_SFH/*.csv")[:10]:
+    for filename in glob.glob(root_path+"/cats_SFH/*.csv"):
       object_id = int((filename.split("_")[-1].split('.')[0])) # Extracting object id
 
       try:
