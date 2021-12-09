@@ -39,7 +39,7 @@ def preprocessing(example):
   img1 = (img1 - tf.constant(mean_velocity)) / tf.constant(std_velocity)
   img2 = (img2 - tf.constant(mean_velocity_disp))/ tf.constant(std_velocity_disp)
 
-  return tf.stack(img0, img1, img2, axis=1), example['last_major_merger']
+  return tf.stack([img0, img1, img2], axis=1), example['last_major_merger']
 
 def input_fn(mode='train', batch_size=64):
   """
