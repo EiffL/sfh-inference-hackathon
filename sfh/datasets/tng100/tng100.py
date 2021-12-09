@@ -142,7 +142,7 @@ class Tng100(tfds.core.GeneratorBasedBuilder):
         # Get snapshot number of the last major merger for the current object_id from the mergers_data dataframe
         SnapNumLastMajorMerger = mergers_data.loc[object_id,'SnapNumLastMajorMerger']
         # Convert snapshot number to lookback time using the snaps dataframe
-        example.update({'last_major_merger': snaps.loc[SnapNumLastMajorMerger,'lbt'].astype('float32')})
+        example.update({'last_major_merger': 1./(1.+snaps.loc[SnapNumLastMajorMerger,'z']).astype('float32')})
 
         # Compute mass history summaries
         mass_history_summaries = find_summaries(example['Mstar_Half'],
