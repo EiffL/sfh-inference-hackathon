@@ -4,7 +4,6 @@ import tensorflow.keras as tfk
 from sfh.datasets.tng100 import tng100
 
 
-
 # Global variables used as parameter for preprocessing the data
 mean_stellar_light = 167915.38
 mean_velocity      = 1.2179685
@@ -53,15 +52,19 @@ def input_fn(mode='train', batch_size=64):
   #data_dir='/Users/benjamin/SCRATCH/sfh/content/data/'
 
 
-  if mode == 'train':
-    dataset = tfds.load('tng100', split='train[:80%]', data_dir=data_dir) 
-    #dataset = dataset.filter(lambda fd: fd['last_major_merger'] > 0.8) # Filter: keep only last_major_merger < 3 Gy
+  if (mode == 'train'):
+    dataset = tfds.load('tng100', split='train[:75%]', data_dir=data_dir) 
     dataset = dataset.map(preprocessing) # Apply data preprocessing
-    dataset = dataset.repeat()
-    dataset = dataset.shuffle(10000)
+    #dataset = dataset.repeat() # Is it really useful ?
+    dataset = dataset.shuffle(20000)
+  elif (mode == 'test'):  
+    dataset = tfds.load('tng100', split='train[75%:90%]', data_dir=data_dir)
+    dataset = dataset.map(preprocessing) # Apply data preprocessing
+  elif (mode == 'valid'):  
+    dataset = tfds.load('tng100', split='train[90%:100%]', data_dir=data_dir)
+    dataset = dataset.map(preprocessing) # Apply data preprocessing
   else:
-    dataset = tfds.load('tng100', split='train[80%:]', data_dir=data_dir)
-    #dataset = dataset.filter(lambda fd: fd['last_major_merger'] > 0.8) # Filter: keep only last_major_merger < 3 Gy
+    dataset = tfds.load('tng100', split='train', data_dir=data_dir)
     dataset = dataset.map(preprocessing) # Apply data preprocessing
   
   dataset = dataset.batch(batch_size, drop_remainder=True)
