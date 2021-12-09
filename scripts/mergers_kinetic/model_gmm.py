@@ -36,6 +36,6 @@ def create_model():
     model.add(tfkl.Dense(params_size))
     model.add(tfp.layers.MixtureNormal(num_components, event_shape))
     
-    model.compile(optimizer=tf.optimizers.Adam(learning_rate=1e-5),loss=negloglik)
+    model.compile(optimizer='Adam',loss=negloglik)
 
     return model
