@@ -36,7 +36,7 @@ def preprocessing(example):
   img2 = (img2 - tf.constant(mean_velocity_disp))/ tf.constant(std_velocity_disp)
 
   # Reduce images size (drop stellar light)
-  img = tf.stack([img1, img2], axis=2)
+  img = tf.stack([img1, img2], axis=-1)
   print(img.shape)
   # Resize images
   img = tf.image.resize(img, [128, 128])
