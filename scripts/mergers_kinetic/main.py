@@ -8,8 +8,8 @@ from model import create_model
 mirrored_strategy = tf.distribute.MirroredStrategy()
 
 # Create the train and testing datasets
-dataset_training = input_fn(mode='train', batch_size=64)
-dataset_testing = input_fn(mode='test', batch_size=64)
+dataset_training = input_fn(mode='train', batch_size=128)
+dataset_testing = input_fn(mode='test', batch_size=128)
 
 # Call to create_model to generate the model
 with mirrored_strategy.scope():
@@ -20,7 +20,7 @@ cnn_model.summary()
 
 # "Hyperparameters"
 LEARNING_RATE=0.0001 ; LEARNING_RATE_EXP_DECAY=0.9
-STEPS_PER_EPOCH=20000//64
+STEPS_PER_EPOCH=20000//128
 EPOCHS = 100
 
 # Callback to decrease the learning rate during the training
