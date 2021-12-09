@@ -56,7 +56,7 @@ def input_fn(mode='train', batch_size=64):
     dataset = tfds.load('tng100', split='train[:75%]', data_dir=data_dir) 
     dataset = dataset.map(preprocessing) # Apply data preprocessing
     dataset = dataset.shuffle(20000)
-    #dataset = dataset.repeat() # Is it really useful ?
+    dataset = dataset.repeat()
   elif (mode == 'test'):  
     dataset = tfds.load('tng100', split='train[75%:90%]', data_dir=data_dir)
     dataset = dataset.map(preprocessing) # Apply data preprocessing
