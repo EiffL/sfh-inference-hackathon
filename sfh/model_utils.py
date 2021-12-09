@@ -12,13 +12,23 @@ def preprocessing_wmass(example):
     tiler = tf.constant([100])
     mass = tf.reshape(tf.tile(mass, tiler),(-1,100,1))
     mass_half = tf.reshape(tf.tile(mass_half, tiler),(-1,100,1))
-    sfr = tf.math.add(tf.reshape(example['SFR_Max'],(-1,100,1)), 1e-3)
+    sfr = tf.math.add(tf.reshape(example['SFR_Max'],(-1,100,1)), 1e-5)
+    res = tf.concat([sfr, mass, mass_half], axis=2)
+    return res, res
+
+def preprocessing_wmass_atan(example):
+    mass = example['Mstar'][:,0]
+    mass_half = example['Mstar_Half'][:,0]
+    tiler = tf.constant([100])
+    mass = tf.reshape(tf.tile(mass, tiler),(-1,100,1))
+    mass_half = tf.reshape(tf.tile(mass_half, tiler),(-1,100,1))
+    sfr = tf.scalar_mul(2/np.pi, tf.math.atan(tf.math.add(tf.reshape(example['SFR_Max'],(-1,100,1)), 1e-5)))
     res = tf.concat([sfr, mass, mass_half], axis=2)
     return res, res
 
 def input_fn(mode='train', batch_size=64, 
              dataset_name='sfh', data_dir=None,
-             include_mass=False):
+             include_mass=False, arctan=False):
     """
     mode: 'train' or 'test'
     """
@@ -30,14 +40,16 @@ def input_fn(mode='train', batch_size=64,
         dataset = tfds.load(dataset_name, split='train[80%:]', data_dir=data_dir)
     
     dataset = dataset.batch(batch_size, drop_remainder=True)
-    if include_mass:
-        dataset = dataset.map(preprocessing_wmass) # Apply data preprocessing
+    if include_mass and arctan:
+        dataset = dataset.map(preprocessing_wmass_atan) # Apply data preprocessing
+    elif include_mass:
+        dataset = dataset.map(preprocessing_wmass)
     else : 
         dataset = dataset.map(preprocessing)
     dataset = dataset.prefetch(-1)       # fetch next batches while training current one (-1 for autotune)
     return dataset
 
-def predictor(model, sample_size, nsteps=100, n_channels=1, mode='sample'):
+def predictor(model, sample_size, nsteps=100, n_channels=1, mode='sample', arctan=False):
     """
     mode should be either 'sample' or 'mean'
     """
@@ -52,7 +64,10 @@ def predictor(model, sample_size, nsteps=100, n_channels=1, mode='sample'):
         if mode=='mean':
             tmp = model(res).mean()
         res[:,i,0] = tmp[:,i]
-    return res[:,:,0]
+    if not arctan :
+        return res[:,:,0]
+    else :
+        return np.tan(res[:,:,0])*np.pi/2
 
 def pass_sample(model, sample):
     """

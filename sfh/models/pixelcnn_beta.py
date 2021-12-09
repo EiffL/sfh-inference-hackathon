@@ -92,6 +92,7 @@ def generate_model(n_timesteps, *, n_channels=1, n_components=2, kernel_size=3,
     
     
     pixel_cnn.add(keras.layers.Lambda(lambda x: tf.math.softplus(x)))
+    '''
     pixel_cnn.add(tfp.layers.DistributionLambda(
                     make_distribution_fn=lambda t: tfd.TransformedDistribution(
                       distribution=tfd.Normal(
@@ -99,6 +100,13 @@ def generate_model(n_timesteps, *, n_channels=1, n_components=2, kernel_size=3,
                           scale=t[..., 1]),
                       bijector=tfb.Softplus(),
                       name='LogNormalTransformedDistribution')
+                    )
+                 )
+    '''
+    pixel_cnn.add(tfp.layers.DistributionLambda(
+                    make_distribution_fn=lambda t: tfd.Beta(
+                          concentration1=t[..., 0],
+                          concentration0=t[..., 1])
                     )
                  )
     
