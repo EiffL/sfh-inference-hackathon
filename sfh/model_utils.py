@@ -7,12 +7,12 @@ def preprocessing(example):
            tf.reshape(example['SFR_Max'],(-1,100,1))
 
 def preprocessing_wmass(example):
-    mass = example['Mstar'][:,-1]
-    mass_half = example['Mstar_Half'][:,-1]
+    mass = example['Mstar'][:,0]
+    mass_half = example['Mstar_Half'][:,0]
     tiler = tf.constant([100])
     mass = tf.reshape(tf.tile(mass, tiler),(-1,100,1))
     mass_half = tf.reshape(tf.tile(mass_half, tiler),(-1,100,1))
-    sfr = tf.reshape(example['SFR_Max'],(-1,100,1))
+    sfr = tf.math.add(tf.reshape(example['SFR_Max'],(-1,100,1)), 1e-3)
     res = tf.concat([sfr, mass, mass_half], axis=2)
     return res, res
 
