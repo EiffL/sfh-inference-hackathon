@@ -14,9 +14,9 @@ cnn_model.summary()
 
 
 # "Hyperparameters"
-LEARNING_RATE=0.001 ; LEARNING_RATE_EXP_DECAY=0.9
+LEARNING_RATE=0.0001 ; LEARNING_RATE_EXP_DECAY=0.9
 STEPS_PER_EPOCH=20000//64
-EPOCHS = 10
+EPOCHS = 100
 
 # Callback to decrease the learning rate during the training
 lr_decay = tfk.callbacks.LearningRateScheduler(lambda epoch: LEARNING_RATE * LEARNING_RATE_EXP_DECAY**epoch,verbose=True)
