@@ -41,6 +41,7 @@ def create_model():
     model.add(tfk.layers.Dense(128))
     model.add(tfk.layers.Activation('tanh'))
     model.add(tfk.layers.Dense(params_size))
+    model.add(tfp.layers.MixtureNormal(num_components, event_shape))
     
     model.compile(optimizer='adam', loss=negloglik)
     return model
