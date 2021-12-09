@@ -1,6 +1,9 @@
 import tensorflow as tf
-import tensorflow.keras as tfk
 import tensorflow_probability as tfp
+tfk = tf.keras
+tfkl = tf.keras.layers
+tfpl = tfp.layers
+tfd = tfp.distributions
 
 def create_model():
 
@@ -12,7 +15,7 @@ def create_model():
     # Utility function to compute how many parameters this distribution requires
     params_size = tfp.layers.MixtureNormal.params_size(num_components, event_shape)
     # Loss function
-    negloglik = lambda y, q: -q.log_prob(y)
+    negloglik = lambda x, rv_x: -rv_x.log_prob(x)
 
     model = tfk.models.Sequential()
     model.add(tfk.layers.Conv2D(32, kernel_size=5, padding='same', input_shape=(128,128,2), activation='elu', strides=2))
