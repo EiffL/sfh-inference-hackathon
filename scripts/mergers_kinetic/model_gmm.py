@@ -36,8 +36,11 @@ def create_model():
     #Dense
     #model.add(tfk.layers.Dense(512,activation='relu'))
     model.add(tfk.layers.Dense(256,activation='relu'))
-    #model.add(tfk.layers.Dropout(0.3))
+    model.add(tfk.layers.Dropout(0.5))
+
     model.add(tfk.layers.Dense(128,activation='tanh'))
+    model.add(tfk.layers.Dropout(0.5))
+
     #Predict a distribution
     model.add(tfkl.Dense(params_size))
     model.add(tfp.layers.MixtureNormal(num_components, event_shape))
