@@ -2,7 +2,6 @@ import tensorflow as tf
 import tensorflow.keras as tfk
 from input_pipeline import input_fn
 from model_mse import create_model as create_model_mse
-from model_gmm import create_model as create_model_gmm
 
 
 # Enable multi-GPU distributed training
@@ -14,7 +13,7 @@ dataset_testing = input_fn(mode='test', batch_size=128)
 
 # Call to create_model to generate the model
 with mirrored_strategy.scope():
-    model = create_model_gmm()
+    model = create_model_mse()
 # Print model architecture
 model.summary()
 

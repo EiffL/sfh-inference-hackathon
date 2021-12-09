@@ -7,41 +7,37 @@ tfd = tfp.distributions
 
 def create_model():
 
-
     # Number of components in the Gaussian Mixture
-    num_components = 16
+    num_components = 3
     # Shape of the distribution
     event_shape = [1]
     # Utility function to compute how many parameters this distribution requires
     params_size = tfp.layers.MixtureNormal.params_size(num_components, event_shape)
-    # Loss function
+
+    #Loss function
     negloglik = lambda x, rv_x: -rv_x.log_prob(x)
 
+    #Define the model
     model = tfk.models.Sequential()
-    model.add(tfk.layers.Conv2D(32, kernel_size=5, padding='same', input_shape=(128,128,2), activation='elu', strides=2))
+    #1st layer
+    model.add(tfk.layers.Conv2D(32, kernel_size=5, padding='same',input_shape=(128,128,2), activation='elu', strides=2))
     model.add(tfk.layers.BatchNormalization())
-    
-    model.add(tfk.layers.Conv2D(64, kernel_size=3, padding='same', activation='elu'))
+    #2nd layer
+    model.add(tfk.layers.Conv2D(64, kernel_size=5, padding='same', activation='relu', strides=2))
     model.add(tfk.layers.BatchNormalization())
-    
-    model.add(tfk.layers.Conv2D(128, kernel_size=3, padding='same', strides=2, activation='elu'))
-    model.add(tfk.layers.BatchNormalization())  
-
-    model.add(tfk.layers.Conv2D(256, kernel_size=3, padding='same', activation='elu', strides=2))
-    model.add(tfk.layers.BatchNormalization())
-
-    model.add(tfk.layers.Conv2D(512, kernel_size=3, padding='same', activation='elu', strides=2))
-    model.add(tfk.layers.BatchNormalization())
-    
+    #Flatten layer
     model.add(tfk.layers.Flatten())
-    model.add(tfk.layers.Dense(256))
-    model.add(tfk.layers.Activation('relu'))
-    model.add(tfk.layers.Dense(128))
-    model.add(tfk.layers.Activation('relu'))
-    model.add(tfk.layers.Dense(128))
-    model.add(tfk.layers.Activation('tanh'))
-    model.add(tfk.layers.Dense(params_size))
+    #Dense
+    #model.add(tfk.layers.Dense(512,activation='relu'))
+    model.add(tfk.layers.Dense(256,activation='relu'))
+    #model.add(tfk.layers.Dropout(0.3))
+    model.add(tfk.layers.Dense(128,activation='relu'))
+    #Predict a distribution
+    model.add(tfkl.Dense(params_size))
     model.add(tfp.layers.MixtureNormal(num_components, event_shape))
+    
+    model.compile(optimizer=tf.optimizers.Adam(learning_rate=1e-4),loss=negloglik)
+
     
     model.compile(optimizer='adam', loss=negloglik)
     return model
