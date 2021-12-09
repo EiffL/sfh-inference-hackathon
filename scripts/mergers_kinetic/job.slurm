@@ -3,8 +3,9 @@
 #SBATCH --output=TNG100_kin_train%j.out
 #SBATCH --error=TNG100_kin_train%j.err
 #SBATCH --nodes=1
-#SBATCH --ntasks=4
 #SBATCH -C v100-32g
+#SBATCH --ntasks=1
+#SBATCH --reservation=hackathon
 #SBATCH --gres=gpu:4
 #SBATCH --cpus-per-task=10
 #SBATCH --hint=nomultithread
