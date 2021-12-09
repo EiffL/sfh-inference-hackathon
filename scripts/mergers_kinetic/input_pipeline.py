@@ -17,6 +17,8 @@ stellar_light_compression = 3.0
 def preprocessing(example):
   import numpy as np
 
+  t2 = tf.clip_by_value(example['last_major_merger'], clip_value_min=0.8, clip_value_max=1)
+
   img0 = example['stellar_light']
   img1 = example['velocity_map']
   img2 = example['velocity_dispersion_map']
@@ -41,7 +43,7 @@ def preprocessing(example):
   img = tf.image.resize(img, [128, 128])
 
 
-  return img, example['last_major_merger']
+  return img, t2
 
 def input_fn(mode='train', batch_size=64):
   """
