@@ -22,13 +22,13 @@ def preprocessing(example):
   img2 = example['velocity_dispersion_map']
 
   # Replace NaNs by zeros
-  img0 = tf.where(tf.math.is_nan(img0), tf.zeros_like(img0), img0).eval()
-  img1 = tf.where(tf.math.is_nan(img1), tf.zeros_like(img1), img1).eval()
-  img2 = tf.where(tf.math.is_nan(img2), tf.zeros_like(img2), img2).eval()
+  img0 = tf.where(tf.math.is_nan(img0), tf.zeros_like(img0), img0)
+  img1 = tf.where(tf.math.is_nan(img1), tf.zeros_like(img1), img1)
+  img2 = tf.where(tf.math.is_nan(img2), tf.zeros_like(img2), img2)
   # Replace InFs by zeros
-  img0 = tf.where(tf.math.is_inf(img0), tf.zeros_like(img0), img0).eval()
-  img1 = tf.where(tf.math.is_inf(img1), tf.zeros_like(img1), img1).eval()
-  img2 = tf.where(tf.math.is_inf(img2), tf.zeros_like(img2), img2).eval()
+  img0 = tf.where(tf.math.is_inf(img0), tf.zeros_like(img0), img0)
+  img1 = tf.where(tf.math.is_inf(img1), tf.zeros_like(img1), img1)
+  img2 = tf.where(tf.math.is_inf(img2), tf.zeros_like(img2), img2)
 
   # Reduce images size
   img0 = tf.image.resize(img0, [128, 128])
