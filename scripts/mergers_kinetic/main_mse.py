@@ -26,11 +26,11 @@ EPOCHS = 100
 # Callback to decrease the learning rate during the training
 lr_decay = tfk.callbacks.LearningRateScheduler(lambda epoch: LEARNING_RATE * LEARNING_RATE_EXP_DECAY**epoch,verbose=True)
 # Callback to save weights during training
-cp_callback = tfk.callbacks.ModelCheckpoint(filepath='./model_checkpoints/', verbose=1, save_weights_only=True)
+cp_callback = tfk.callbacks.ModelCheckpoint(filepath='./model_checkpoints_mse/', verbose=1, save_weights_only=True)
 
 # Train the model
 with mirrored_strategy.scope():
     model.fit(dataset_training, validation_data=dataset_testing, steps_per_epoch=STEPS_PER_EPOCH, epochs=EPOCHS, callbacks=[lr_decay, cp_callback])
 
 # Save model when training finishes 
-    model.save('./cnn_model')
+    model.save('./model_mse')
