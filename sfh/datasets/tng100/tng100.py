@@ -149,7 +149,8 @@ class Tng100(tfds.core.GeneratorBasedBuilder):
                                                 example['time'])
         last_over_max = example['Mstar_Half'][0]/np.max(example['Mstar_Half'])
         example.update({'mass_quantiles': mass_history_summaries,
-                        'last_over_max': last_over_max})
+                        'last_over_max': last_over_max,
+                        'object_id': object_id})
 
         yield object_id, example
       except:
