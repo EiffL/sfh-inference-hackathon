@@ -37,10 +37,8 @@ def preprocessing(example):
 
   # Reduce images size (drop stellar light)
   img = tf.stack([img1, img2], axis=-1)
-  print(img.shape)
   # Resize images
   img = tf.image.resize(img, [128, 128])
-  print(img.shape)
 
 
   return img, example['last_major_merger']
