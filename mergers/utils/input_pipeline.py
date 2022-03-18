@@ -48,7 +48,7 @@ def input_fn(mode='train', batch_size=64):
   mode: 'train' or 'test'
   """
   # Jean-Zay datasets diretory:
-  data_dir='/gpfsscratch/rech/qrc/commun/tensorflow_datasets'
+  data_dir='/gpfsscratch/rech/wvb/commun/tensorflow_datasets'
   #data_dir='/Users/benjamin/SCRATCH/sfh/content/data/'
 
   # 3 cases: train (75%), test (15%) and valid (10%). Full dataset (100%) by default
