@@ -26,7 +26,7 @@ module load tensorflow-gpu/py3/2.6.0
 
 4. Start an interactive session
 ```bash
-srun --ntasks=1 --cpus-per-task=10 --gres=gpu:1 --hint=nomultithread --time=06:00:00 -A qrc@gpu --reservation=hackathon --pty bash
+srun --ntasks=1 --cpus-per-task=10 --gres=gpu:1 --hint=nomultithread --time=06:00:00 -A wvb@gpu --pty bash
 ```
 
 5. Start a jupyter lab
