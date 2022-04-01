@@ -45,7 +45,7 @@ included in it.
 
 One way to install it for your environment on Jean Zay you can do:
 
-```python
+```shell
 cd sfh-inference-hackathon
 pip install --user -e .
 ```
