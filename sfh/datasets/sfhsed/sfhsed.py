@@ -51,7 +51,7 @@ class Sfhsed(tfds.core.GeneratorBasedBuilder):
         # TODO(my_dataset): Downloads the data and defines the splits
         # dl_manager is a tfds.download.DownloadManager that can be used to
         # download and extract URLs
-        tng_dir_path = "/gpfswork/rech/qrc/commun/SFH/tng100"
+        tng_dir_path = "/gpfswork/rech/wvb/commun/SFH/tng100"
         return [
             tfds.core.SplitGenerator(
                 name=tfds.Split.TRAIN,
