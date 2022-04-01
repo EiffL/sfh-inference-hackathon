@@ -9,6 +9,13 @@ from astropy.io import fits
 from astropy.table import Table
 from scipy.interpolate import interp1d
 
+# Location of the TNG100 data. Either take the TNG100_DATA_PATH environment
+# variable or look in the ALL_CCFRWORK for Jean Zay
+TNG100_DATA_PATH = os.getenv(
+    'TNG100_DATA_PATH',
+    f"{os.getenv('ALL_CCFRWORK')}/SFH/tng100/"
+)
+
 _DESCRIPTION = """
 #Data of TNG100 galaxy
 """
@@ -145,7 +152,7 @@ class Tng100(tfds.core.GeneratorBasedBuilder):
         """Returns generators according to split"""
         return {tfds.Split.TRAIN: self._generate_examples(str(dl.manual_dir))}
 
-    def _generate_examples(self, root_path):
+    def _generate_examples(self, root_path=TNG100_DATA_PATH):
         """Yields examples."""
 
         # Create new dataframe with the columns 'Illustris_ID' and 'SnapNumLastMajorMerger'
