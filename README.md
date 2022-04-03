@@ -50,7 +50,15 @@ cd sfh-inference-hackathon
 pip install --user -e .
 ```
 
-In particular, this module contains the TNG100 dataset.  To load it, if you don't want to bother with symlinking the `tensorflow_datasets` or indicating `data_dir` you can do:
+To customize the location of the data, it is possible to use two environment
+variables:
+
+- `TNG100_DATA_PATH` contains the path to the TNG100 data.
+- `TFDS_DATA_DIR` contains the path to the tensorflow datasets.
+
+And then use the function `sfh.datasets.setup_environment`.  On Jean Zay,
+there's no need to define these two environment variables and the function will
+set them automatically.
 
 ```python
 from sfh.datasets import setup_environment, tng100
