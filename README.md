@@ -36,3 +36,34 @@ idrlab --notebook-dir=$PWD
 And then follow the link to https://idrvprox.idris.fr, log in, and click on your submitted job.
 
 Then you can try to load the [intro notebook](notebooks/Intro_Hackathon_Astroinfo21_SFHs.ipynb)
+
+## Code organisation
+
+There is a `sfh` module whose code lies in `code/sfh`.  The code that is used
+in several notebooks, or code that shall be ran outside of notebooks, shall be
+included in it.
+
+One way to install it for your environment on Jean Zay you can do:
+
+```shell
+cd sfh-inference-hackathon
+pip install --user -e .
+```
+
+To customize the location of the data, it is possible to use two environment
+variables:
+
+- `TNG100_DATA_PATH` contains the path to the TNG100 data.
+- `TFDS_DATA_DIR` contains the path to the tensorflow datasets.
+
+And then use the function `sfh.datasets.setup_environment`.  On Jean Zay,
+there's no need to define these two environment variables and the function will
+set them automatically.
+
+```python
+from sfh.datasets import setup_environment, tng100
+import tensorflow_datasets as tfds
+
+setup_environment()
+dset = tfds.load('tng100', split='train')
+```
