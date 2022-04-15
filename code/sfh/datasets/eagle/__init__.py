@@ -106,8 +106,17 @@ class Eagle(tfds.core.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl):
-        """Returns generators according to split"""
-        return {tfds.Split.TRAIN: self._generate_examples(str(dl.manual_dir))}
+        """Returns generators according to split.
+
+        If the EAGLE_DATA_PATH environment variable is defined, look for the
+        data in it, else, use the standard mechanism.
+
+        TODO: Set the download URL.
+        """
+        data_path = os.getenv('EAGLE_DATA_PATH')
+        if data_path is None:
+            data_path = str(dl.download_and_extract("https://todo-data-url"))
+        return {tfds.Split.TRAIN: self._generate_examples(data_path)}
 
     def _generate_examples(self, root_path):
         """Yields examples."""
