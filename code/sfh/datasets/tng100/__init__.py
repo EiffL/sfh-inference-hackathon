@@ -78,9 +78,10 @@ def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):
 class Tng100(tfds.core.GeneratorBasedBuilder):
     """TNG100 galaxy dataset"""
 
-    VERSION = tfds.core.Version("2.0.0")
+    VERSION = tfds.core.Version("3.0.0")
     RELEASE_NOTES = {
         "2.0.0": "Change flux units. wl is sort.",
+	"3.0.0": "Maps and last major merger features.",
     }
     MANUAL_DOWNLOAD_INSTRUCTIONS = (
         "Nothing to download. Dataset was generated at first call."
@@ -101,9 +102,15 @@ class Tng100(tfds.core.GeneratorBasedBuilder):
                     "noiseless_griz": tfds.features.Tensor(
                         shape=(128, 128, 4), dtype=tf.float32
                     ),
-                    #'stellar_light': tfds.features.Tensor(shape=(512, 512), dtype=tf.float32),
-                    #'velocity_map': tfds.features.Tensor(shape=(512, 512), dtype=tf.float32),
-                    #'velocity_dispersion_map': tfds.features.Tensor(shape=(512, 512), dtype=tf.float32),
+                    "stellar_light": tfds.features.Tensor(
+                        shape=(512, 512), dtype=tf.float32
+                    ),
+                    "velocity_map": tfds.features.Tensor(
+                        shape=(512, 512), dtype=tf.float32
+                    ),
+                    "velocity_dispersion_map": tfds.features.Tensor(
+                        shape=(512, 512), dtype=tf.float32
+                    ),
                     "sed": tfds.features.Tensor(shape=(143,), dtype=tf.float32),
                     "time": tfds.features.Tensor(
                         shape=(N_TIMESTEPS,), dtype=tf.dtypes.float32
@@ -128,7 +135,7 @@ class Tng100(tfds.core.GeneratorBasedBuilder):
                     ),
                     "wl_sort": tfds.features.Tensor(shape=(143,), dtype=tf.float32),
                     "last_over_max": tf.float32,
-                    #'last_major_merger': tf.float32,
+                    "last_major_merger": tf.float32,
                     "object_id": tf.int32,
                 }
             ),
@@ -136,21 +143,35 @@ class Tng100(tfds.core.GeneratorBasedBuilder):
         )
 
     def _split_generators(self, dl):
-        """Returns generators according to split"""
-        return {tfds.Split.TRAIN: self._generate_examples(str(dl.manual_dir))}
+        """Returns generators according to split.
+
+        If the TNG100_DATA_PATH environment variable is defined, look for the
+        data in it, else use the standard mechanism.
+
+        TODO: Set the download URL.
+        """
+        data_path = os.getenv('TNG100_DATA_PATH')
+        if data_path is None:
+            data_path = str(dl.download_and_extract("https://todo-data-url"))
+
+        return {tfds.Split.TRAIN: self._generate_examples(data_path)}
 
     def _generate_examples(self, root_path):
         """Yields examples."""
 
         # Create new dataframe with the columns 'Illustris_ID' and 'SnapNumLastMajorMerger'
         # of the TNG100_SDSS_MajorMergers.csv file
-        # mergers_data = pd.read_csv(root_path+'/mergers/TNG100_SDSS_MajorMergers.csv',
-        #                          usecols=['Illustris_ID','SnapNumLastMajorMerger'],
-        #                         index_col='Illustris_ID')
+        mergers_data = pd.read_csv(
+            root_path + "/mergers/TNG100_SDSS_MajorMergers.csv",
+            usecols=["Illustris_ID", "SnapNumLastMajorMerger"],
+            index_col="Illustris_ID",
+        )
 
         # Create new dataframe with equivalence values between Snapshots numbers and redshifts, age, loopback time
         snaps = pd.read_csv(
-            root_path + "/snaps.csv", index_col=0, names=["sn", "z", "age", "lbt"]
+            os.path.join(os.path.dirname(__file__), "./") + "/snaps.csv",
+            index_col=0,
+            names=["sn", "z", "age", "lbt"],
         )
         a = 1.0 / (1.0 + np.array(snaps["z"][::-1]))
 
@@ -176,10 +197,19 @@ class Tng100(tfds.core.GeneratorBasedBuilder):
                 example = {"noiseless_griz": img.astype("float32")}
 
                 # Opening kinematic data
-                # kin_image = fits.getdata(root_path+'/mergers/maps/sn99/moments_TNG100-1_99_%d_stars_i0__32.fits'%object_id, ext=0)
-                # example.update({'stellar_light': kin_image[0].astype('float32'),
-                #               'velocity_map': kin_image[1].astype('float32'),
-                #               'velocity_dispersion_map': kin_image[2].astype('float32')})
+                kin_image = fits.getdata(
+                    root_path
+                    + "/mergers/maps/sn99/moments_TNG100-1_99_%d_stars_i0__32.fits"
+                    % object_id,
+                    ext=0,
+                )
+                example.update(
+                    {
+                        "stellar_light": kin_image[0].astype("float32"),
+                        "velocity_map": kin_image[1].astype("float32"),
+                        "velocity_dispersion_map": kin_image[2].astype("float32"),
+                    }
+                )
 
                 # Retrieve sed row for given galaxy
                 row = phot_cat[phot_cat["subhaloIDs"] == object_id][0]
@@ -209,9 +239,18 @@ class Tng100(tfds.core.GeneratorBasedBuilder):
                 example.update({"time": np.array(a).astype("float32")})
 
                 # Get snapshot number of the last major merger for the current object_id from the mergers_data dataframe
-                # SnapNumLastMajorMerger = mergers_data.loc[object_id,'SnapNumLastMajorMerger']
+                SnapNumLastMajorMerger = mergers_data.loc[
+                    object_id, "SnapNumLastMajorMerger"
+                ]
                 # Convert snapshot number to lookback time using the snaps dataframe
-                # example.update({'last_major_merger': 1./(1.+snaps.loc[SnapNumLastMajorMerger,'z']).astype('float32')})
+                example.update(
+                    {
+                        "last_major_merger": 1.0
+                        / (1.0 + snaps.loc[SnapNumLastMajorMerger, "z"]).astype(
+                            "float32"
+                        )
+                    }
+                )
 
                 # Compute mass history summaries
                 mass_history_summaries = find_summaries(
