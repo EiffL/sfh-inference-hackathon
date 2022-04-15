@@ -42,6 +42,11 @@ def stack_bands(img_dir, gal_id):
     return im
 
 
+def get_wl():
+    """Returns the wavelength grid of the TNG100 dataset."""
+    return np.loadtxt(f'{os.getenv("TNG100_DATA_PATH")}/wl.csv')
+
+
 def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):
 
     """compute the half mass and the half time of a galaxy

@@ -19,6 +19,11 @@ _URL = "https://github.com/mhuertascompany/sfh-inference-hackathon"
 ## My functions added ##
 
 
+def get_wl():
+    """Returns the wavelength grid of the EAGLE dataset."""
+    return np.loadtxt(f'{os.getenv("EAGLE_DATA_PATH")}/wl.csv')
+
+
 def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):
 
     """compute the half mass and the half time of a galaxy

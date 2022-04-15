@@ -66,5 +66,7 @@ import tensorflow_datasets as tfds
 
 setup_environment()
 dset_tng100 = tfds.load('tng100', split='train')
+wl_tng100 = tng100.get_wl()
 dset_eagle = tfds.load('eagle', split='train')
+wl_eagle = eagle.get_wl()
 ```
