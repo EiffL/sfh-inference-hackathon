@@ -10,10 +10,16 @@ def setup_environment():
     This function configures tensorflow_datasets to find the datasets in the
     correct location.
     """
-    # Set TNG100_DATA_PATH on Jean Zay
+    # Set TNG100_DATA_PATH on Jean Zay if no environment variable
     os.environ['TNG100_DATA_PATH'] = os.getenv(
         'TNG100_DATA_PATH',
         f"{os.getenv('ALL_CCFRWORK')}/SFH/tng100/"
+    )
+
+    # Set EAGLE_DATA_PATH on Jean Zay if no EnvironmentError variable
+    os.environ['EAGLE_DATA_PATH'] = os.getenv(
+        'EAGLE_DATA_PATH',
+        f"{os.getenv('ALL_CCFRWORK')}/SFH/eagle/"
     )
 
     # Set the location of the tensorflow datasets.
