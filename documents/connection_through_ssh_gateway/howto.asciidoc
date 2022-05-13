@@ -1,0 +1,73 @@
+Connecting using a SSH gateway
+==============================
+:sectnums:
+:Date: March 2022
+:source-highlighter: rouge
+:experimental:
+
+To connect to Jean Zay, in addition to your username creation you had to give an
+IP address you will be connecting from.  In some cases, this will be the address
+of the SSH gateway used by your laboratory.  This short documentation explains
+how to make things easier.
+
+== Connecting with SSH
+
+You have to “jump through” your gateway to have access to Jean Zay.  You can put
+that into your `~/.ssh/config` file (replacing the things between `<>` by the
+actual values of course):
+
+```SSH
+Host jz
+  HostName jean-zay.idris.fr
+  User <your IDRIS username>
+  ProxyJump <your username on the gateway>@<the address or name of your gateway>
+```
+
+Then, you can then connect directly to Jean-Zay with `ssh jz`.
+
+== Displaying the notebooks
+
+IDRIS has a proxy system to display the notebooks running on the computing
+nodes as explained into
+link:http://www.idris.fr/jean-zay/pre-post/jean-zay-jupyter-notebook.html[their
+documentation].  This proxy is only reachable by your connection IP address.  To
+do that it's easy to use your gateway as a proxy.
+
+On Firefox (why would you want to use anything else?) you can use the
+extension
+link:https://addons.mozilla.org/en-US/firefox/addon/foxyproxy-standard/?[FoxyProxy
+Standard].
+
+image::assets/1.png[]
+
+Once installed, it will add an icons ① on your toolbar. Clicking on it will open
+a little window on which you can click on “Options” ② to add ③ a new proxy
+setting.
+
+image::assets/2.png[]
+
+Give a pretty name ④, select `SOCKS5` as proxy type ⑤, use `127.0.0.1` as proxy
+address ⑥ and `8888` as proxy port ⑦. Also switch to not sending DNS queries
+through the proxy ⑧.
+
+Then, as we don't want all the traffic to go through the proxy, do “Save & Edit
+Patterns” ⑨.
+
+image::assets/3.png[]
+
+Replace the “all IPs” pattern.  Give a friendly name ⑩, use `idrvprox.idris.fr`
+as pattern ⑪ and save ⑫.
+
+image::assets/4.png[]
+
+Then, you can ask to only use the proxy by pattern ⑬.  Doing this, only your
+HTTP traffic to the IDRIS proxy will use your SOCKS proxy while your other
+connections (you might need to use search engines while coding...) will be
+direct.
+
+Before connecting to the IDRIS proxy for notebooks, you will first need to
+connect to your gateway creating the SOCKS proxy with `ssh -D 8888 -N <your
+gateway>`.  This will not launch a login shell, keep the command running while
+you are working and kill it with kbd:[CTRL + C] when you have finished.
+
+You will then have access to https://idrvprox.idris.fr/.

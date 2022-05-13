@@ -164,7 +164,7 @@ import os
 import pandas as pd
 import numpy as np
 
-TNG100_PATH="/gpfswork/rech/qrc/commun/SFH/tng100"
+TNG100_PATH="/gpfswork/rech/wvb/commun/SFH/tng100"
 
 
 def find_summaries(mass, time, percentiles=np.linspace(0.1, 0.9, 9)):
