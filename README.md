@@ -61,9 +61,10 @@ there's no need to define these two environment variables and the function will
 set them automatically.
 
 ```python
-from sfh.datasets import setup_environment, tng100
+from sfh.datasets import setup_environment, tng100, eagle
 import tensorflow_datasets as tfds
 
 setup_environment()
-dset = tfds.load('tng100', split='train')
+dset_tng100 = tfds.load('tng100', split='train')
+dset_eagle = tfds.load('eagle', split='train')
 ```
