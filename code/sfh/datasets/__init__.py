@@ -19,7 +19,7 @@ def setup_environment():
     # Set EAGLE_DATA_PATH on Jean Zay if no EnvironmentError variable
     os.environ['EAGLE_DATA_PATH'] = os.getenv(
         'EAGLE_DATA_PATH',
-        f"{os.getenv('ALL_CCFRWORK')}/SFH/eagle/"
+        f"{os.getenv('ALL_CCFRWORK')}/SFH/eagle-sim/"
     )
 
     # Set the location of the tensorflow datasets.
